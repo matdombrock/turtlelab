@@ -1,0 +1,8 @@
+build
+out
+lib/lua/src/*.o
+lib/lua/src/*.a
+lib/lua/src/luac
+lib/lua/src/lua
+lib/lua/src/luac
+env.src

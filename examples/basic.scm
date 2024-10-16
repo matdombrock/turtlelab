@@ -1,0 +1,6 @@
+(color 255 255 255 255)
+(teleport 8 8)
+(right 64)
+(down 64)
+(left 64)
+(up 64)
