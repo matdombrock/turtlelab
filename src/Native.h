@@ -6,6 +6,7 @@
 #include "CLIOpts.h"
 #include "DBG.h"
 #include "Turtle.h"
+#include "Beep.h"
 
 enum Command {
     CMD_UP,
@@ -40,10 +41,13 @@ public:
 class Native {
 public:
     Turtle turtle;
+    Beep beep;
     std::vector<QueueItem> queue;
     uint bgr = 15;
     uint bgg = 15;
     uint bgb = 15;
+    Native() {}
+    ~Native() {}
     template <typename T>
     void print(T value) {
         std::cout << value << std::endl;
@@ -121,7 +125,7 @@ public:
                 break;   
         }
     }
-    void dbgCommand(QueueItem item, uint index) {
+    void printCommand(QueueItem item, uint index) {
         DBG("#" + std::to_string(index) + " ", false);
         switch  (item.command) {
             case CMD_UP:
@@ -177,7 +181,7 @@ public:
             turtle.reset(); // Always reset on first command
         }
         turtle.reset();
-        if (!opts.noDebug) dbgCommand(currentItem, index);
+        if (!opts.noDebug) printCommand(currentItem, index);
         for (int i = 0; i <= index; i++) {
             QueueItem item = queue[i];
             if (item.command == CMD_COLOR 
@@ -201,6 +205,16 @@ public:
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
         SDL_RenderPresent(ren);
+        beep.setVolume(opts.mute ? 0 : opts.volume);
+        beep.play();
+        beep.freq = 220;
+        beep.freq += turtle.x * 10;
+        beep.freq += turtle.y * 20;
+        uint8_t r,g,b,a;
+        SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
+        beep.m1 = r / 255.0f;
+        beep.m2 = g / 255.0f;
+        beep.m3 = b / 255.0f;
     }
 private:
 };

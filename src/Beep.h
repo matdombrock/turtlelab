@@ -8,6 +8,9 @@ class Beep {
 public:
     int amplitude = 28000;
     int freq = 440;
+    float m1 = 1;
+    float m2 = 1;
+    float m3 = 1;
     SDL_AudioDeviceID dev;
     Beep() {}
     ~Beep() {
@@ -18,14 +21,28 @@ public:
         int sampleCount = len / 2;
         Sint16* stream16 = (Sint16*)stream;
         for (int i = 0; i < sampleCount; i++) {
-           stream16[i] = beep->amplitude * sin(2 * M_PI * beep->freq * i / SAMPLE_RATE);
+            Sint16 sample1 = beep->amplitude * beep->m1 * sin(2 * M_PI * beep->freq * i / SAMPLE_RATE);
+            Sint16 sample2 = beep->amplitude * beep->m2 * (sin(2 * M_PI * beep->freq / 8 * i / SAMPLE_RATE) > 0 ? 0.75f : -0.75f); 
+            Sint16 sample3 = beep->amplitude * beep->m3 * sin(2 * M_PI * beep->freq * 8 * i / SAMPLE_RATE); 
+            // sample1 *= beep->m1;
+            // sample2 *= beep->m2;
+            // sample3 *= beep->m3;
+            Sint16 mix = (sample1 + sample2 + sample3) / 3;
+            // mono boost
+            if (beep->m1 + beep->m2 + beep->m3 <= 1) {
+                mix *= 2.5f;
+            }
+            // clip
+            if (mix > beep->amplitude) mix = beep->amplitude;
+            stream16[i] = mix;
         }
         // std::cout << beep->freq << std::endl;
     }
     void setVolume(uint8_t v) {
         amplitude = 28000 * v / 100;
     }
-    void play() {
+    void play(bool once = true) {
+        if (dev) return;
         // return;
         SDL_AudioSpec want, have;
         SDL_memset(&want, 0, sizeof(want));
@@ -43,5 +60,6 @@ public:
         // DBG("Stopping audio");
         SDL_PauseAudioDevice(dev, 1);
         SDL_CloseAudioDevice(dev);
+        dev = 0;
     }
 };

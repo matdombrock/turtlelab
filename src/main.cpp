@@ -117,9 +117,6 @@ void run(CLIOpts opts, std::string fileContents = "") {
     int delayTime = opts.delay;
     Timer ts;
     ts.frameDelay = delayTime;
-    Beep beep;
-    beep.setVolume(opts.mute ? 0 : opts.volume);
-    beep.play();
     while (true) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -148,7 +145,6 @@ void run(CLIOpts opts, std::string fileContents = "") {
                 x = LuaBinds::native.turtle.x;
                 y = LuaBinds::native.turtle.y;
             }
-            beep.freq = 200 + x + y * 2;
             // DBG("Freq: " + std::to_string(beep.freq));
             // beep.freq = ticks % 2 == 0 ? 220 : 440;
             ticks++;
@@ -157,7 +153,6 @@ void run(CLIOpts opts, std::string fileContents = "") {
             SDL_SetWindowTitle(win, title.c_str());
         }
     }
-    beep.stop();
 }
 
 int getArgI(int index, char * argv[], int argc) {

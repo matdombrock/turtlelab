@@ -1,8 +1,9 @@
 // This uses the DuktapeJS engine to run JavaScript code
 // It only supports ES5, so no let, const, or arrow functions etc
-
+var co = 0;
 function col(i) {
-    color(i, 255 -i , i, 255);
+    color(255 - co, 255 -i , co, 255);
+    co+=2;
 }
 function coin() {
     return Math.random() < 0.5;
