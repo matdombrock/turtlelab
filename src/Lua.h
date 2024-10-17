@@ -161,10 +161,7 @@ namespace LuaBinds {
 class Lua : public LangBase {
 public:
     Lua() {}
-    ~Lua() {
-        // DBG("Closing Lua");
-        // lua_close(LuaBinds::L);
-    }
+    ~Lua() {}
     void load(const std::string &fileContents, SDL_Renderer *renderer) override {
         file = fileContents;
         file = LuaBinds::prependExtras(file);
@@ -184,6 +181,4 @@ public:
     void process(int index, CLIOpts opts) override {
         LuaBinds::native.process(index, opts, LuaBinds::ren);
     }
-private:
-    std::string file;
 };

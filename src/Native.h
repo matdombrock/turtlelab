@@ -105,6 +105,70 @@ public:
     void goBack(uint8_t n) {
         queue.push_back(QueueItem(CMD_BACK, n));
     }
+    void process(uint index, CLIOpts opts, SDL_Renderer *ren) {
+        if (queue.size() == 0) {
+            return;
+        }
+        if (!opts.noLoop) {
+            index = index % queue.size();
+        }
+        else if (index >= queue.size()) {
+            return;
+        }
+        SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
+        SDL_RenderClear(ren);
+        QueueItem currentItem = queue[index];
+        if (index == 0) {
+            if (!opts.noDebug) DBG("-------");
+            turtle.reset(); // Always reset on first command
+        }
+        turtle.reset();
+        if (!opts.noDebug) printCommand(currentItem, index);
+        for (int i = 0; i <= index; i++) {
+            QueueItem item = queue[i];
+            if (item.command == CMD_COLOR 
+                || item.command == CMD_TELEPORT
+                || item.command == CMD_BACK) 
+            {
+                handleCommand(item, ren);
+                // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
+                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+            }
+            else {
+                if (item.a < 0) {
+                    DBG("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
+                }
+                for (int i = 0; i < abs(item.a); i++) {
+                    handleCommand(item, ren);
+                    // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
+                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+                }
+            }
+            turtle.mark();
+        }
+        if (!opts.hideTurtle) {
+            uint8_t r, g, b, a;
+            SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
+            SDL_SetRenderDrawColor(ren, 0,255,0, 255);
+            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
+            SDL_SetRenderDrawColor(ren, r, g, b, a);
+        }
+
+        SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
+        SDL_RenderPresent(ren);
+        // Audio
+        beep.setVolume(opts.mute ? 0 : opts.volume);
+        beep.play();
+        beep.freq = 220;
+        beep.freq += turtle.x() * 10;
+        beep.freq += turtle.y() * 20;
+        uint8_t r,g,b,a;
+        SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
+        beep.m1 = r / 255.0f;
+        beep.m2 = g / 255.0f;
+        beep.m3 = b / 255.0f;
+    }
+private:
     void handleCommand(QueueItem item, SDL_Renderer *ren) {
         switch (item.command ) {
             case CMD_FORWARD:
@@ -212,68 +276,4 @@ public:
                 break;
         }
     }
-    void process(uint index, CLIOpts opts, SDL_Renderer *ren) {
-        if (queue.size() == 0) {
-            return;
-        }
-        if (!opts.noLoop) {
-            index = index % queue.size();
-        }
-        else if (index >= queue.size()) {
-            return;
-        }
-        SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
-        SDL_RenderClear(ren);
-        QueueItem currentItem = queue[index];
-        if (index == 0) {
-            if (!opts.noDebug) DBG("-------");
-            turtle.reset(); // Always reset on first command
-        }
-        turtle.reset();
-        if (!opts.noDebug) printCommand(currentItem, index);
-        for (int i = 0; i <= index; i++) {
-            QueueItem item = queue[i];
-            if (item.command == CMD_COLOR 
-                || item.command == CMD_TELEPORT
-                || item.command == CMD_BACK) 
-            {
-                handleCommand(item, ren);
-                // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
-            }
-            else {
-                if (item.a < 0) {
-                    DBG("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
-                }
-                for (int i = 0; i < abs(item.a); i++) {
-                    handleCommand(item, ren);
-                    // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
-                }
-            }
-            turtle.mark();
-        }
-        if (!opts.hideTurtle) {
-            uint8_t r, g, b, a;
-            SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
-            SDL_SetRenderDrawColor(ren, 0,255,0, 255);
-            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
-            SDL_SetRenderDrawColor(ren, r, g, b, a);
-        }
-
-        SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-        SDL_RenderPresent(ren);
-        // Audio
-        beep.setVolume(opts.mute ? 0 : opts.volume);
-        beep.play();
-        beep.freq = 220;
-        beep.freq += turtle.x() * 10;
-        beep.freq += turtle.y() * 20;
-        uint8_t r,g,b,a;
-        SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
-        beep.m1 = r / 255.0f;
-        beep.m2 = g / 255.0f;
-        beep.m3 = b / 255.0f;
-    }
-private:
 };

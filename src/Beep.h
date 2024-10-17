@@ -24,9 +24,6 @@ public:
             Sint16 sample1 = beep->amplitude * beep->m1 * sin(2 * M_PI * beep->freq * i / SAMPLE_RATE);
             Sint16 sample2 = beep->amplitude * beep->m2 * (sin(2 * M_PI * beep->freq / 8 * i / SAMPLE_RATE) > 0 ? 0.75f : -0.75f); 
             Sint16 sample3 = beep->amplitude * beep->m3 * sin(2 * M_PI * beep->freq * 8 * i / SAMPLE_RATE); 
-            // sample1 *= beep->m1;
-            // sample2 *= beep->m2;
-            // sample3 *= beep->m3;
             Sint16 mix = (sample1 + sample2 + sample3) / 3;
             // mono boost
             if (beep->m1 + beep->m2 + beep->m3 <= 1) {
@@ -36,7 +33,6 @@ public:
             if (mix > beep->amplitude) mix = beep->amplitude;
             stream16[i] = mix;
         }
-        // std::cout << beep->freq << std::endl;
     }
     void setVolume(uint8_t v) {
         amplitude = 28000 * v / 100;
@@ -49,7 +45,6 @@ public:
         want.freq = SAMPLE_RATE;
         want.format = AUDIO_S16SYS;
         want.channels = 1;
-        // want.samples = 44000 / 16;
         want.samples = 16;
         want.callback = audio_callback;
         want.userdata = this;
