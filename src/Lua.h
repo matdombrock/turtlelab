@@ -76,6 +76,11 @@ namespace LuaBinds {
         native.teleport(x, y);
         return 0;
     }
+    int back(lua_State *L) {
+        int n = luaL_checkinteger(L, 1);
+        native.back(n);
+        return 0;
+    }
     int color(lua_State *L) {
         int r = luaL_checkinteger(L, 1);
         int g = luaL_checkinteger(L, 2);
@@ -103,6 +108,7 @@ namespace LuaBinds {
         lua_register(L, "downRight", downRight);
         lua_register(L, "downLeft", downLeft);
         lua_register(L, "teleport", teleport);
+        lua_register(L, "back", back);
         lua_register(L, "color", color);
         lua_register(L, "bg", bg);
     }

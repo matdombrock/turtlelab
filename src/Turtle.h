@@ -1,45 +1,65 @@
 #pragma once
+#include <vector>
 #include <cstdint>
 
+struct Pos {
+    uint16_t x;
+    uint16_t y;
+};
 
 class Turtle {
 public:
-    uint16_t x = 0;
-    uint16_t y = 0;
+    Pos pos = {0, 0};
+    std::vector<Pos> hist;
     void up() {
-        y--;
+        pos.y--;
     }
     void down() {
-        y++;
+        pos.y++;
     }
     void left() {
-        x--;
+        pos.x--;
     }
     void right() {
-        x++;
+        pos.x++;
     }
     void upRight() {
-        x++;
-        y--;
+        pos.x++;
+        pos.y--;
     }
     void upLeft() {
-        x--;
-        y--;
+        pos.x--;
+        pos.y--;
     }
     void downRight() {
-        x++;
-        y++;
+        pos.x++;
+        pos.y++;
     }
     void downLeft() {
-        x--;
-        y++;
+        pos.x--;
+        pos.y++;
     }
     void teleport(uint16_t x, u_int16_t y) {
-        this->x = x;
-        this->y = y;
+        pos.x = x;
+        pos.y = y;
     } 
+    void back(uint8_t n) {
+        int index = hist.size() - n - 1;
+        if (index < 0) {
+            index = 0;
+        }
+        pos = hist[index];
+    }
+    void mark() {
+        hist.push_back(pos);
+        DBG("Marking " + std::to_string(pos.x) + " " + std::to_string(pos.y));
+        for (auto p : hist) {
+            DBG("Hist " + std::to_string(p.x) + " " + std::to_string(p.y));
+        }
+    }
     void reset() {
-        x = 0;
-        y = 0;
+        pos = {0, 0};
+        hist.clear();
+        mark();
     }
 };

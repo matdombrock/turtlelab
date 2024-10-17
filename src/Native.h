@@ -18,6 +18,7 @@ enum Command {
     CMD_DOWN_RIGHT,
     CMD_DOWN_LEFT,
     CMD_TELEPORT,
+    CMD_BACK,
     CMD_COLOR,
     CMD_BG
 };
@@ -86,6 +87,9 @@ public:
     void teleport(uint x, uint y) {
         queue.push_back(QueueItem(CMD_TELEPORT, x, y));
     }
+    void back(uint n) {
+        queue.push_back(QueueItem(CMD_BACK, n));
+    }
     void handleCommand(QueueItem item, SDL_Renderer *ren) {
         switch (item.command ) {
             case CMD_UP:
@@ -114,6 +118,9 @@ public:
                 break;
             case CMD_TELEPORT:
                 turtle.teleport(item.a, item.b);
+                break;
+            case CMD_BACK:
+                turtle.back(item.a);
                 break;
             case CMD_COLOR:
                 SDL_SetRenderDrawColor(ren, item.a, item.b, item.c, item.d);
@@ -155,6 +162,9 @@ public:
             case CMD_TELEPORT:
                 DBG("TELEPORT " + std::to_string(item.a) + " " + std::to_string(item.b));
                 break;
+            case CMD_BACK:
+                DBG("BACK " + std::to_string(item.a));
+                break;
             case CMD_COLOR:
                 DBG("COLOR " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c) + " " + std::to_string(item.d));
                 break;
@@ -185,31 +195,35 @@ public:
         for (int i = 0; i <= index; i++) {
             QueueItem item = queue[i];
             if (item.command == CMD_COLOR 
-                || item.command == CMD_TELEPORT) 
+                || item.command == CMD_TELEPORT
+                || item.command == CMD_BACK) 
             {
                 handleCommand(item, ren);
                 // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x * 2, turtle.y * 2, 2, 2});
+                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2, turtle.pos.y * 2, 2, 2});
             }
-            for (int i = 0; i < item.a; i++) {
-                handleCommand(item, ren);
-                // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x * 2, turtle.y * 2, 2, 2});
+            else {
+                for (int i = 0; i < item.a; i++) {
+                    handleCommand(item, ren);
+                    // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
+                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2, turtle.pos.y * 2, 2, 2});
+                }
             }
+            turtle.mark();
         }
         if (!opts.hideTurtle) {
             uint8_t r, g, b, a;
             SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
             SDL_SetRenderDrawColor(ren, 0,255,0, 255);
-            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x * 2 - 8, turtle.y * 2 - 8, 16, 16});
+            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2 - 8, turtle.pos.y * 2 - 8, 16, 16});
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
         SDL_RenderPresent(ren);
         beep.setVolume(opts.mute ? 0 : opts.volume);
         beep.play();
         beep.freq = 220;
-        beep.freq += turtle.x * 10;
-        beep.freq += turtle.y * 20;
+        beep.freq += turtle.pos.x * 10;
+        beep.freq += turtle.pos.y * 20;
         uint8_t r,g,b,a;
         SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
         beep.m1 = r / 255.0f;

@@ -71,6 +71,10 @@ namespace SchemeBinds {
         native.teleport(s7_integer(s7_car(args)), s7_integer(s7_cadr(args)));
         return s7_nil(s7);
     }
+    s7_pointer back(s7_scheme *sc, s7_pointer args) {
+        native.back(s7_integer(s7_car(args)));
+        return s7_nil(s7);
+    }
     s7_pointer color(s7_scheme *sc, s7_pointer args) {
         int r = s7_integer(s7_car(args));
         int g = s7_integer(s7_cadr(args));
@@ -94,6 +98,7 @@ namespace SchemeBinds {
         s7_define_function(s7, "down-right", downRight, 1, 0, false, "Moves down and right");
         s7_define_function(s7, "down-left", downLeft, 1, 0, false, "Moves down and left");
         s7_define_function(s7, "teleport", teleport, 2, 0, false, "Teleports to a location");
+        s7_define_function(s7, "back", back, 1, 0, false, "Moves back");
         s7_define_function(s7, "color", color, 3, 1, false, "Sets the color");
         s7_define_function(s7, "bg", bg, 3, 0, false, "Sets the background color");
     }

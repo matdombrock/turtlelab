@@ -12,5 +12,7 @@ function main() {
     downLeft(64);
     upLeft(64);
     upRight(64);
+    back(7);
+    downLeft(32);
     print("Hello, world!");
 }

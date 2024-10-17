@@ -128,22 +128,14 @@ void run(CLIOpts opts, std::string fileContents = "") {
         }
         ts.update();
         if (ts.frame()) {
-            int x = 0;
-            int y = 0;
             if (opts.lang == "scheme") {
                 scheme.process(ticks, opts);
-                x = SchemeBinds::native.turtle.x;
-                y = SchemeBinds::native.turtle.y;
             } 
             else if (opts.lang == "js") {
                 js.process(ticks, opts);
-                x = JavaScriptBinds::native.turtle.x;
-                y = JavaScriptBinds::native.turtle.y;
             }
             else if (opts.lang == "lua") {
                 lua.process(ticks, opts);
-                x = LuaBinds::native.turtle.x;
-                y = LuaBinds::native.turtle.y;
             }
             // DBG("Freq: " + std::to_string(beep.freq));
             // beep.freq = ticks % 2 == 0 ? 220 : 440;

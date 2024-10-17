@@ -9,4 +9,6 @@
 (down-left 64)
 (up-left 64)
 (up-right 64)
+(back 7)
+(down-left 32)
 (print "Hello, world!")
