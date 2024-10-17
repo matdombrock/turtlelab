@@ -1,13 +1,34 @@
 
 # TurtleLab
-TurtleLab is an audio-visual programming toy that can be scripted multiple languages. 
+TurtleLab is a lofi audio-visual programming toy that can be scripted in multiple real-world languages. 
 
 Supported Languages:
 - Scheme
 - JavaScript
 - Lua
 
-# CLI Usage
+![ss1](doc/ss1.gif)
+![ss2](doc/ss2.gif)
+
+## Turtle Graphics: A Visual Programming Tool
+
+"Turtle graphics" is a programming concept that uses a virtual turtle to create drawings or shapes on a screen. The turtle can be controlled by simple commands like "forward," "rotate," "right," and "left," which move the turtle in specific directions.
+
+### Key Concepts:
+
+- Turtle: A virtual object that can be moved around a coordinate system.
+- Commands: Instructions that control the turtle's movements and actions, such as drawing lines, changing colors, or picking up/putting down the pen.
+- Coordinate System: A grid-like system that defines the turtle's position and orientation.
+- Canvas: The drawing surface where the turtle's movements and creations are displayed.
+
+### Why are Turtle Graphics Cool?
+
+- Visual Learning: Turtle graphics provides a visual representation of programming concepts, making it easier to understand.
+- Interactive Programming: Students can experiment with different commands and see the immediate results, fostering creativity and problem-solving skills.
+- Foundation for Advanced Concepts: Turtle graphics can be used as a foundation for learning more complex programming topics like loops, functions, and object-oriented programming.
+
+# Usage
+The primary way of interacting with TurtleLab is via the CLI. 
 ```
 Usage: turtle <file> [options]
 Options:
@@ -21,6 +42,60 @@ Options:
   -m, --mute            Mute the sound
   -h, --help            Display this help message
 ```
+
+### Example:
+```sh
+./turtle examples/api.js -d 1000
+```
+
+# API
+## `bg r g b`
+Set the background color. Acceptable color values are between 0 and 255.
+
+## `color r g b a?`
+Set the drawing color. Acceptable color values are between 0 and 255. Alpha is optional. Set an alpha value of 0 to move without drawing. 
+
+## `forward n`
+Move the turtle forward `n` pixels in the direction it is facing. Direction is determined by the current rotation value. 
+
+## `rotate n`
+Rotate the turtle to an absolute rotation value. 256 "rotation units" makes up a full rotation.  
+
+## `rotate_cw n`
+Rotate the turtle clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
+
+## `rotate_ccw n`
+Rotate the turtle counter-clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
+
+## `up n`
+Move the turtle up on the Y axis `n` pixels.
+
+## `down n`
+Move the turtle down on the Y axis `n` pixels.
+
+## `left n`
+Move the turtle left on the Y axis `n` pixels.
+
+## `right n`
+Move the turtle right on the Y axis `n` pixels.
+
+## `down_right n`
+Move the turtle down and right `n` pixels in each direction. 
+
+## `down_left n`
+Move the turtle down and left `n` pixels in each direction. 
+
+## `up_right n`
+Move the turtle up and right `n` pixels in each direction. 
+
+## `up_left n`
+Move the turtle up and left `n` pixels in each direction. 
+
+## `teleport x y`
+Move to the given coordinates.
+
+## `go_back n`
+Move the turtle to where it was `n` commands ago. Does not reset the rotation. 
 
 # Scripting
 ## JavaScript ([`examples/api.js`](examples/api.js))
@@ -81,6 +156,13 @@ downLeft(32)
 print("Hello, world!")
 ```
 
+# Tips
+- The canvas for drawing on is 256x256 px.
+- Drawing outside of the canvas is generally allowed.
+- The audio synthesis parameters are fed by the turtle coordinates as well as the drawing color. 
+- Each subsequent command requires re-running the whole program. So very long program will slow down as they go.
+- Frame delay is displayed in the window title bar. Higher numbers mean your program is running slower. 
+
 # Build
 Install the deps listed below and then run the Makefile or build with the shell scripts.
 ## macOS build
@@ -121,5 +203,5 @@ Build Scripts:
 
 Makefile:
 ```
-make
+make turtle_linux
 ```

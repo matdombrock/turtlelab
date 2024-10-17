@@ -22,8 +22,14 @@ public:
         pos.x += cos(angle);
         pos.y += sin(angle);
     }
-    void rotate() {
+    void rotate(uint8_t n) {
+        angle = n * 3.14159 / 128;
+    }
+    void rotateCW() {
         angle += 3.14159 / 128;
+    }
+    void rotateCCW() {
+        angle -= 3.14159 / 128;
     }
     void up() {
         pos.y--;
@@ -57,7 +63,7 @@ public:
         pos.x = x;
         pos.y = y;
     } 
-    void back(uint8_t n) {
+    void goBack(uint8_t n) {
         int index = hist.size() - n - 1;
         if (index < 0) {
             index = 0;

@@ -11,6 +11,8 @@
 enum Command {
     CMD_FORWARD,
     CMD_ROTATE,
+    CMD_ROTATE_CW,
+    CMD_ROTATE_CCW,
     CMD_UP,
     CMD_DOWN,
     CMD_LEFT,
@@ -64,37 +66,43 @@ public:
     void forward(uint n) {
         queue.push_back(QueueItem(CMD_FORWARD, n));
     }
-    void rotate(float a) {
-        queue.push_back(QueueItem(CMD_ROTATE, a));
+    void rotate(uint8_t n) {
+        queue.push_back(QueueItem(CMD_ROTATE, n));
     }
-    void up(uint n) {    
+    void rotateCW(float a) {
+        queue.push_back(QueueItem(CMD_ROTATE_CW, a));
+    }
+    void rotateCCW(float a) {
+        queue.push_back(QueueItem(CMD_ROTATE_CCW, a));
+    }
+    void up(uint8_t n) {    
         queue.push_back(QueueItem(CMD_UP, n));
     }
-    void down(uint n) {
+    void down(uint8_t n) {
         queue.push_back(QueueItem(CMD_DOWN, n));
     }
-    void left(uint n) {
+    void left(uint8_t n) {
         queue.push_back(QueueItem(CMD_LEFT, n));
     }
-    void right(uint n) {
+    void right(uint8_t n) {
         queue.push_back(QueueItem(CMD_RIGHT, n));
     }
-    void upRight(uint n) {
+    void upRight(uint8_t n) {
         queue.push_back(QueueItem(CMD_UP_RIGHT, n));
     }
-    void upLeft(uint n) {
+    void upLeft(uint8_t n) {
         queue.push_back(QueueItem(CMD_UP_LEFT, n));
     }
-    void downRight(uint n) {
+    void downRight(uint8_t n) {
         queue.push_back(QueueItem(CMD_DOWN_RIGHT, n));
     }
-    void downLeft(uint n) {
+    void downLeft(uint8_t n) {
         queue.push_back(QueueItem(CMD_DOWN_LEFT, n));
     }
-    void teleport(uint x, uint y) {
+    void teleport(uint8_t x, uint y) {
         queue.push_back(QueueItem(CMD_TELEPORT, x, y));
     }
-    void back(uint n) {
+    void goBack(uint8_t n) {
         queue.push_back(QueueItem(CMD_BACK, n));
     }
     void handleCommand(QueueItem item, SDL_Renderer *ren) {
@@ -103,7 +111,13 @@ public:
                 turtle.forward();
                 break;
             case CMD_ROTATE:
-                turtle.rotate();
+                turtle.rotate(item.a);
+                break;
+            case CMD_ROTATE_CW:
+                turtle.rotateCW();
+                break;
+            case CMD_ROTATE_CCW:
+                turtle.rotateCCW();
                 break;
             case CMD_UP:
                 turtle.up();
@@ -133,7 +147,7 @@ public:
                 turtle.teleport(item.a, item.b);
                 break;
             case CMD_BACK:
-                turtle.back(item.a);
+                turtle.goBack(item.a);
                 break;
             case CMD_COLOR:
                 SDL_SetRenderDrawColor(ren, item.a, item.b, item.c, item.d);
@@ -153,6 +167,12 @@ public:
                 break;
             case CMD_ROTATE:
                 DBG("ROTATE " + std::to_string(item.a));
+                break;
+            case CMD_ROTATE_CW:
+                DBG("ROTATE_CW " + std::to_string(item.a));
+                break;
+            case CMD_ROTATE_CCW:
+                DBG("ROTATE_CCW " + std::to_string(item.a));
                 break;
             case CMD_UP:
                 DBG("UP " + std::to_string(item.a));
@@ -182,7 +202,7 @@ public:
                 DBG("TELEPORT " + std::to_string(item.a) + " " + std::to_string(item.b));
                 break;
             case CMD_BACK:
-                DBG("BACK " + std::to_string(item.a));
+                DBG("GO_BACK " + std::to_string(item.a));
                 break;
             case CMD_COLOR:
                 DBG("COLOR " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c) + " " + std::to_string(item.d));
@@ -240,7 +260,10 @@ public:
             SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
+
+        SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
         SDL_RenderPresent(ren);
+        // Audio
         beep.setVolume(opts.mute ? 0 : opts.volume);
         beep.play();
         beep.freq = 220;

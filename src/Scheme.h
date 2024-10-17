@@ -34,8 +34,20 @@ namespace SchemeBinds {
     }
 
     s7_pointer rotate(s7_scheme *sc, s7_pointer args) {
+        int n = s7_integer(s7_car(args));
+        native.rotate(n);
+        return s7_nil(sc);
+    }
+
+    s7_pointer rotateCW(s7_scheme *sc, s7_pointer args) {
         float a = s7_real(s7_car(args));
-        native.rotate(a);
+        native.rotateCW(a);
+        return s7_nil(sc);
+    }
+
+    s7_pointer rotateCCW(s7_scheme *sc, s7_pointer args) {
+        float a = s7_real(s7_car(args));
+        native.rotateCCW(a);
         return s7_nil(sc);
     }
 
@@ -83,8 +95,8 @@ namespace SchemeBinds {
         native.teleport(s7_integer(s7_car(args)), s7_integer(s7_cadr(args)));
         return s7_nil(s7);
     }
-    s7_pointer back(s7_scheme *sc, s7_pointer args) {
-        native.back(s7_integer(s7_car(args)));
+    s7_pointer goBack(s7_scheme *sc, s7_pointer args) {
+        native.goBack(s7_integer(s7_car(args)));
         return s7_nil(s7);
     }
     s7_pointer color(s7_scheme *sc, s7_pointer args) {
@@ -102,7 +114,9 @@ namespace SchemeBinds {
     void setBinds() {
         s7_define_function(s7, "print", print, 1, 0, false, "Prints a string");
         s7_define_function(s7, "forward", forward, 1, 0, false, "Moves forward");
-        s7_define_function(s7, "rotate", rotate, 1, 0, false, "Rotates");
+        s7_define_function(s7, "rotate", rotate, 1, 0, false, "Rotates absolute");
+        s7_define_function(s7, "rotate-cw", rotateCW, 1, 0, false, "Rotates Clockwise");
+        s7_define_function(s7, "rotate-ccw", rotateCCW, 1, 0, false, "Rotates Counter Clockwise");
         s7_define_function(s7, "up", up, 1, 0, false, "Moves up");
         s7_define_function(s7, "down", down, 1, 0, false, "Moves down");
         s7_define_function(s7, "left", left, 1, 0, false, "Moves left");
@@ -112,7 +126,7 @@ namespace SchemeBinds {
         s7_define_function(s7, "down-right", downRight, 1, 0, false, "Moves down and right");
         s7_define_function(s7, "down-left", downLeft, 1, 0, false, "Moves down and left");
         s7_define_function(s7, "teleport", teleport, 2, 0, false, "Teleports to a location");
-        s7_define_function(s7, "back", back, 1, 0, false, "Moves back");
+        s7_define_function(s7, "go-back", goBack, 1, 0, false, "Moves back");
         s7_define_function(s7, "color", color, 3, 1, false, "Sets the color");
         s7_define_function(s7, "bg", bg, 3, 0, false, "Sets the background color");
     }

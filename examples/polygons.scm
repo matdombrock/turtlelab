@@ -1,0 +1,13 @@
+(define (poly n)
+    (loop n (lambda (i)
+        (forward 64)
+        (rotate-cw (/ 256 n))
+    ))
+)
+
+(loop 8 (lambda (i)
+    (define n (+ 3 i))
+    (teleport 64 64)
+    (color (- 255 (* n 16)) (* n 16) 255)
+    (poly n)
+))

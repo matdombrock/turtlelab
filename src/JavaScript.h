@@ -23,6 +23,30 @@ namespace JavaScriptBinds {
         }
         return 0;
     }
+
+    duk_ret_t forward(duk_context *ctx) {
+        int n = duk_require_int(ctx, 0);
+        native.forward(n);
+        return 0;
+    }
+
+    duk_ret_t rotate(duk_context *ctx) {
+        int a = duk_require_int(ctx, 0);
+        native.rotate(a);
+        return 0;
+    }
+
+    duk_ret_t rotateCW(duk_context *ctx) {
+        int a = duk_require_int(ctx, 0);
+        native.rotateCW(a);
+        return 0;
+    }
+
+    duk_ret_t rotateCCW(duk_context *ctx) {
+        int a = duk_require_int(ctx, 0);
+        native.rotateCCW(a);
+        return 0;
+    }
     
     duk_ret_t up(duk_context *ctx) {
         int n = duk_opt_int(ctx, 0, 1);
@@ -70,9 +94,9 @@ namespace JavaScriptBinds {
         native.teleport(x, y);
         return 0;
     }
-    duk_ret_t back(duk_context *ctx) {
+    duk_ret_t goBack(duk_context *ctx) {
         int n = duk_opt_int(ctx, 0, 1);
-        native.back(n);
+        native.goBack(n);
         return 0;
     }
     duk_ret_t color(duk_context *ctx) {
@@ -91,6 +115,14 @@ namespace JavaScriptBinds {
         duk_push_global_object(ctx);
         duk_push_c_function(ctx, print, 1);
         duk_put_prop_string(ctx, -2, "print");
+        duk_push_c_function(ctx, forward, 1);
+        duk_put_prop_string(ctx, -2, "forward");
+        duk_push_c_function(ctx, rotate, 1);
+        duk_put_prop_string(ctx, -2, "rotate");
+        duk_push_c_function(ctx, rotateCW, 1);
+        duk_put_prop_string(ctx, -2, "rotateCW");
+        duk_push_c_function(ctx, rotateCCW, 1);
+        duk_put_prop_string(ctx, -2, "rotateCCW");
         duk_push_c_function(ctx, up, 1);
         duk_put_prop_string(ctx, -2, "up");
         duk_push_c_function(ctx, down, 1);
@@ -109,8 +141,8 @@ namespace JavaScriptBinds {
         duk_put_prop_string(ctx, -2, "downLeft");
         duk_push_c_function(ctx, teleport, 2);
         duk_put_prop_string(ctx, -2, "teleport");
-        duk_push_c_function(ctx, back, 1);
-        duk_put_prop_string(ctx, -2, "back");
+        duk_push_c_function(ctx, goBack, 1);
+        duk_put_prop_string(ctx, -2, "goBack");
         duk_push_c_function(ctx, color, 4);
         duk_put_prop_string(ctx, -2, "color");
         duk_push_c_function(ctx, bg, 3);

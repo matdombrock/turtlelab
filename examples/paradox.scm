@@ -1,9 +1,9 @@
 (define (spin n nn)
     (loop n (lambda (i)
         (color (* i 8) (- 255 (* i 8)) 128)
-        (rotate nn)
+        (rotate-cw nn)
         (forward 128)
-        (back 1)
+        (go-back 1)
     ))
 )
 

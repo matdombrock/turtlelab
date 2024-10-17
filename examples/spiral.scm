@@ -2,5 +2,5 @@
 (color 255 255 255 255)
 (loop 32 (lambda (i)
     (forward (- 32 i))
-    (rotate (* i 1))
+    (rotate-cw (* i 1))
 ))

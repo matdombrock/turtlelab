@@ -30,57 +30,91 @@ namespace LuaBinds {
         return 0;
     }
 
+    int forward(lua_State *L) {
+        int n = luaL_checkinteger(L, 1);
+        native.forward(n);
+        return 0;
+    }
+
+    int rotate(lua_State *L) {
+        int n = luaL_checkinteger(L, 1);
+        native.rotate(n);
+        return 0;
+    }
+
+    int rotateCW(lua_State *L) {
+        int n = luaL_checkinteger(L, 1);
+        native.rotateCW(n);
+        return 0;
+    }
+
+    int rotateCCW(lua_State *L) {
+        int n = luaL_checkinteger(L, 1);
+        native.rotateCCW(n);
+        return 0;
+    }
+
     int up(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.up(n);
         return 0;
     }
+
     int down(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.down(n);
         return 0;
     }
+
     int left(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.left(n);
         return 0;
     }
+
     int right(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.right(n);
         return 0;
     }
+
     int upRight(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.upRight(n);
         return 0;
     }
+
     int upLeft(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.upLeft(n);
         return 0;
     }
+
     int downRight(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.downRight(n);
         return 0;
     }
+
     int downLeft(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
         native.downLeft(n);
         return 0;
     }
+
     int teleport(lua_State *L) {
         int x = luaL_checkinteger(L, 1);
         int y = luaL_checkinteger(L, 2);
         native.teleport(x, y);
         return 0;
     }
-    int back(lua_State *L) {
+
+    int goBack(lua_State *L) {
         int n = luaL_checkinteger(L, 1);
-        native.back(n);
+        native.goBack(n);
         return 0;
     }
+
     int color(lua_State *L) {
         int r = luaL_checkinteger(L, 1);
         int g = luaL_checkinteger(L, 2);
@@ -89,6 +123,7 @@ namespace LuaBinds {
         native.color(r, g, b, a);
         return 0;
     }
+
     int bg(lua_State *L) {
         int r = luaL_checkinteger(L, 1);
         int g = luaL_checkinteger(L, 2);
@@ -99,6 +134,10 @@ namespace LuaBinds {
 
     void setBinds() {
         lua_register(L, "print", print);
+        lua_register(L, "forward", forward);
+        lua_register(L, "rotate", rotate);
+        lua_register(L, "rotateCW", rotateCW);
+        lua_register(L, "rotateCCW", rotateCCW);
         lua_register(L, "up", up);
         lua_register(L, "down", down);
         lua_register(L, "left", left);
@@ -108,7 +147,7 @@ namespace LuaBinds {
         lua_register(L, "downRight", downRight);
         lua_register(L, "downLeft", downLeft);
         lua_register(L, "teleport", teleport);
-        lua_register(L, "back", back);
+        lua_register(L, "goBack", goBack);
         lua_register(L, "color", color);
         lua_register(L, "bg", bg);
     }

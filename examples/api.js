@@ -12,7 +12,10 @@ function main() {
     downLeft(64);
     upLeft(64);
     upRight(64);
-    back(7);
-    downLeft(32);
+    goBack(7);
+    rotateCW(64);
+    rotateCCW(32);
+    rotate(0);
+    forward(32);
     print("Hello, world!");
 }
