@@ -1,5 +1,5 @@
 
-(teleport 116 128)
+(teleport 112 128)
 (color 255 255 255 255)
 (loop 128 (lambda (i)
     (color 10 10 10 10)

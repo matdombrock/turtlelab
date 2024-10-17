@@ -120,8 +120,22 @@ public:
             Log("End of program (no loop)");
             return;
         }
+
         SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
         SDL_RenderClear(ren);
+
+        SDL_SetRenderDrawColor(ren, 64, 64, 64, 255);
+        // Draw a grid
+        for (int x = 0; x < 512; x+=8) {
+            for (int y = 0; y < 512; y+=8) {
+                SDL_RenderDrawLine(ren, x, 0, x, 512);
+                SDL_RenderDrawLine(ren, 0, y, 512, y);
+            }
+        }
+        SDL_SetRenderDrawColor(ren, 96, 96, 96, 255);
+        SDL_RenderDrawLine(ren, 0, 256, 512, 256);
+        SDL_RenderDrawLine(ren, 256, 0, 256, 512);
+
         QueueItem currentItem = queue[index];
         if (index == 0) {
             if (!opts.noDebug) Log("-------");
@@ -143,10 +157,16 @@ public:
                 if (item.a < 0) {
                     Log("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
                 }
-                for (int i = 0; i < abs(item.a); i++) {
+                // Special case for rotate 0
+                if (item.command == CMD_ROTATE && item.a == 0) {
                     handleCommand(item, ren);
-                    // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+                }
+                else {
+                    for (int i = 0; i < abs(item.a); i++) {
+                        handleCommand(item, ren);
+                        // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
+                        SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+                    }
                 }
             }
             turtle.mark();

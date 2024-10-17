@@ -60,7 +60,7 @@ Set the drawing color. Acceptable color values are between 0 and 255. Alpha is o
 Move the turtle forward `n` pixels in the direction it is facing. Direction is determined by the current rotation value. 
 
 ## `rotate n`
-Rotate the turtle to an absolute rotation value. 256 "rotation units" makes up a full rotation.  
+Rotate the turtle to an absolute rotation value. 256 "rotation units" makes up a full rotation.
 
 ## `rotate_cw n`
 Rotate the turtle clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
@@ -167,6 +167,7 @@ print("Hello, world!")
 # Tips
 - The canvas for drawing on is 256x256 px.
 - Drawing outside of the canvas is generally allowed.
+- `rotate 0` resets the rotation and snaps the turtle sub-position. 
 - The audio synthesis parameters are fed by the turtle coordinates as well as the drawing color. 
 - Each subsequent command requires re-running the whole program. So very long program will slow down as they go.
 - Frame delay is displayed in the window title bar. Higher numbers mean your program is running slower. 
