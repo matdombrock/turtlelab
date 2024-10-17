@@ -71,7 +71,11 @@ namespace JavaScriptBinds {
         return 0;
     }
     duk_ret_t color(duk_context *ctx) {
-        native.color(duk_require_int(ctx, 0), duk_require_int(ctx, 1), duk_require_int(ctx, 2), duk_require_int(ctx, 3));
+        int r = duk_require_int(ctx, 0);
+        int g = duk_require_int(ctx, 1);
+        int b = duk_require_int(ctx, 2);
+        int a = duk_opt_int(ctx, 3, 255); // Default alpha value is 255 if not provided
+        native.color(r, g, b, a);
         return 0;
     }
     duk_ret_t bg(duk_context *ctx) {
@@ -133,12 +137,14 @@ public:
         duk_push_string(JavaScriptBinds::ctx, fileEnv.c_str());
         if (duk_peval(JavaScriptBinds::ctx) != 0) {
             std::cerr << "Error: " << duk_safe_to_string(JavaScriptBinds::ctx, -1) << std::endl;
+            exit(1);
         }
         duk_pop(JavaScriptBinds::ctx);
         duk_push_global_object(JavaScriptBinds::ctx);
         duk_get_prop_string(JavaScriptBinds::ctx, -1, "main");
         if (duk_pcall(JavaScriptBinds::ctx, 0) != 0) {
             std::cerr << "Error: " << duk_safe_to_string(JavaScriptBinds::ctx, -1) << std::endl;
+            exit(1);
         }
         duk_pop(JavaScriptBinds::ctx);
     }

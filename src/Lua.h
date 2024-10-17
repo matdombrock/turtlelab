@@ -80,7 +80,7 @@ namespace LuaBinds {
         int r = luaL_checkinteger(L, 1);
         int g = luaL_checkinteger(L, 2);
         int b = luaL_checkinteger(L, 3);
-        int a = luaL_checkinteger(L, 4);
+        int a = luaL_optinteger(L, 4, 255); // Default alpha value is 255 if not provided
         native.color(r, g, b, a);
         return 0;
     }
@@ -133,6 +133,7 @@ public:
         std::string fileEnv = env + file;
         if (luaL_dostring(LuaBinds::L, fileEnv.c_str())) {
             std::cerr << "Error: " << lua_tostring(LuaBinds::L, -1) << std::endl;
+            exit(1);
         }
     }
     void process(int index, CLIOpts opts) override {

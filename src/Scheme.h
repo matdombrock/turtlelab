@@ -72,7 +72,11 @@ namespace SchemeBinds {
         return s7_nil(s7);
     }
     s7_pointer color(s7_scheme *sc, s7_pointer args) {
-        native.color(s7_integer(s7_car(args)), s7_integer(s7_cadr(args)), s7_integer(s7_caddr(args)), s7_integer(s7_cadddr(args)));
+        int r = s7_integer(s7_car(args));
+        int g = s7_integer(s7_cadr(args));
+        int b = s7_integer(s7_caddr(args));
+        int a = s7_is_null(sc, s7_cdddr(args)) ? 255 : s7_integer(s7_cadddr(args)); // Default alpha to 255 if not provided
+        native.color(r, g, b, a);
         return s7_nil(s7);
     }
     s7_pointer bg(s7_scheme *sc, s7_pointer args) {
@@ -90,7 +94,7 @@ namespace SchemeBinds {
         s7_define_function(s7, "down-right", downRight, 1, 0, false, "Moves down and right");
         s7_define_function(s7, "down-left", downLeft, 1, 0, false, "Moves down and left");
         s7_define_function(s7, "teleport", teleport, 2, 0, false, "Teleports to a location");
-        s7_define_function(s7, "color", color, 4, 0, false, "Sets the color");
+        s7_define_function(s7, "color", color, 3, 1, false, "Sets the color");
         s7_define_function(s7, "bg", bg, 3, 0, false, "Sets the background color");
     }
 
@@ -120,10 +124,16 @@ public:
         std::cout << "Scheme initialized" << std::endl;
     }
     void run() override{
-        // std:string env = "(define ticks " + std::to_string(ticks) + ")";
         std::string env = "";
-        std::string fileEnv = env + file;
-        s7_load_c_string(SchemeBinds::s7, fileEnv.c_str(), fileEnv.size());
+        // Scheme is expected to return 0 if everything is ok
+        std::string fileEnv = env + file + " 0";
+        s7_pointer result = s7_load_c_string(SchemeBinds::s7, fileEnv.c_str(), fileEnv.size());
+        std::string resString = s7_object_to_c_string(SchemeBinds::s7, result);
+        DBG("Scheme result: " + resString);
+        if (resString != "0") {
+            DBG("ERROR: Issue with Scheme code");
+            exit(1);
+        }
         s7_quit(SchemeBinds::s7);
     }
     void process(int index, CLIOpts opts) override {
