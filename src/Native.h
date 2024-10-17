@@ -9,6 +9,8 @@
 #include "Beep.h"
 
 enum Command {
+    CMD_FORWARD,
+    CMD_ROTATE,
     CMD_UP,
     CMD_DOWN,
     CMD_LEFT,
@@ -26,11 +28,11 @@ enum Command {
 class QueueItem {
 public:
     Command command;
-    uint a;
-    uint b;
-    uint c;
-    uint d;
-    QueueItem(Command command, uint a = 1, uint b = 0, uint c = 0, uint d = 0) {
+    int a;
+    int b;
+    int c;
+    int d;
+    QueueItem(Command command, int a = 1, int b = 0, int c = 0, int d = 0) {
         this->command = command;
         this->a = a;
         this->b = b;
@@ -58,6 +60,12 @@ public:
     }
     void bg(uint8_t r, uint8_t g, uint8_t b) {
         queue.push_back(QueueItem(CMD_BG, r, g, b));
+    }
+    void forward(uint n) {
+        queue.push_back(QueueItem(CMD_FORWARD, n));
+    }
+    void rotate(float a) {
+        queue.push_back(QueueItem(CMD_ROTATE, a));
     }
     void up(uint n) {    
         queue.push_back(QueueItem(CMD_UP, n));
@@ -91,6 +99,12 @@ public:
     }
     void handleCommand(QueueItem item, SDL_Renderer *ren) {
         switch (item.command ) {
+            case CMD_FORWARD:
+                turtle.forward();
+                break;
+            case CMD_ROTATE:
+                turtle.rotate();
+                break;
             case CMD_UP:
                 turtle.up();
                 break;
@@ -134,6 +148,12 @@ public:
     void printCommand(QueueItem item, uint index) {
         DBG("#" + std::to_string(index) + " ", false);
         switch  (item.command) {
+            case CMD_FORWARD:
+                DBG("FORWARD " + std::to_string(item.a));
+                break;
+            case CMD_ROTATE:
+                DBG("ROTATE " + std::to_string(item.a));
+                break;
             case CMD_UP:
                 DBG("UP " + std::to_string(item.a));
                 break;
@@ -199,13 +219,16 @@ public:
             {
                 handleCommand(item, ren);
                 // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2, turtle.pos.y * 2, 2, 2});
+                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
             }
             else {
-                for (int i = 0; i < item.a; i++) {
+                if (item.a < 0) {
+                    DBG("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
+                }
+                for (int i = 0; i < abs(item.a); i++) {
                     handleCommand(item, ren);
                     // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2, turtle.pos.y * 2, 2, 2});
+                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
                 }
             }
             turtle.mark();
@@ -214,15 +237,15 @@ public:
             uint8_t r, g, b, a;
             SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
             SDL_SetRenderDrawColor(ren, 0,255,0, 255);
-            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.pos.x * 2 - 8, turtle.pos.y * 2 - 8, 16, 16});
+            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
         SDL_RenderPresent(ren);
         beep.setVolume(opts.mute ? 0 : opts.volume);
         beep.play();
         beep.freq = 220;
-        beep.freq += turtle.pos.x * 10;
-        beep.freq += turtle.pos.y * 20;
+        beep.freq += turtle.x() * 10;
+        beep.freq += turtle.y() * 20;
         uint8_t r,g,b,a;
         SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
         beep.m1 = r / 255.0f;

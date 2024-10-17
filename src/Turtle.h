@@ -3,14 +3,28 @@
 #include <cstdint>
 
 struct Pos {
-    uint16_t x;
-    uint16_t y;
+    float x;
+    float y;
 };
 
 class Turtle {
 public:
     Pos pos = {0, 0};
+    float angle = 0;
     std::vector<Pos> hist;
+    int x() {
+        return round(pos.x);
+    }
+    int y() {
+        return round(pos.y);
+    }
+    void forward() {
+        pos.x += cos(angle);
+        pos.y += sin(angle);
+    }
+    void rotate() {
+        angle += 3.14159 / 128;
+    }
     void up() {
         pos.y--;
     }
@@ -52,13 +66,10 @@ public:
     }
     void mark() {
         hist.push_back(pos);
-        DBG("Marking " + std::to_string(pos.x) + " " + std::to_string(pos.y));
-        for (auto p : hist) {
-            DBG("Hist " + std::to_string(p.x) + " " + std::to_string(p.y));
-        }
     }
     void reset() {
         pos = {0, 0};
+        angle = 0;
         hist.clear();
         mark();
     }

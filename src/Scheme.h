@@ -27,6 +27,18 @@ namespace SchemeBinds {
         return s7_nil(sc);
     }
 
+    s7_pointer forward(s7_scheme *sc, s7_pointer args) {
+        int n = s7_integer(s7_car(args));
+        native.forward(n);
+        return s7_nil(sc);
+    }
+
+    s7_pointer rotate(s7_scheme *sc, s7_pointer args) {
+        float a = s7_real(s7_car(args));
+        native.rotate(a);
+        return s7_nil(sc);
+    }
+
     s7_pointer up(s7_scheme *sc, s7_pointer args) {
         int n = s7_integer(s7_car(args));
         native.up(n);
@@ -89,6 +101,8 @@ namespace SchemeBinds {
     }
     void setBinds() {
         s7_define_function(s7, "print", print, 1, 0, false, "Prints a string");
+        s7_define_function(s7, "forward", forward, 1, 0, false, "Moves forward");
+        s7_define_function(s7, "rotate", rotate, 1, 0, false, "Rotates");
         s7_define_function(s7, "up", up, 1, 0, false, "Moves up");
         s7_define_function(s7, "down", down, 1, 0, false, "Moves down");
         s7_define_function(s7, "left", left, 1, 0, false, "Moves left");

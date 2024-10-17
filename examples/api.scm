@@ -11,4 +11,7 @@
 (up-right 64)
 (back 7)
 (down-left 32)
+(forward 32)
+(rotate 1.4)
+(forward 32)
 (print "Hello, world!")
