@@ -7,7 +7,7 @@
 #include "Beep.h"
 #include "Timer.h"
 #include "CLIOpts.h"
-#include "DBG.h"
+#include "Log.h"
 #include "FileIO.h"
 
 Scheme scheme;
@@ -31,6 +31,7 @@ void showHelp(bool full = false) {
     std::cout << "  -s, --skipIntro       Skip the intro" << std::endl;
     std::cout << "  -t, --hideTurtle      Hide the cursor" << std::endl;
     std::cout << "  -o, --noLoop          Do not loop the program" << std::endl;
+    std::cout << "  -a, --autoClose       Automatically close the program when done" << std::endl;
     std::cout << "  -b, --noDebug         Do not show debug messages" << std::endl;
     std::cout << "  -v, --volume <volume> Set the volume" << std::endl;
     std::cout << "  -m, --mute            Mute the sound" << std::endl;
@@ -71,7 +72,7 @@ void intro(CLIOpts opts) {
     ts.frameDelay = 50;
     Beep beep;
     beep.setVolume(opts.mute ? 0 : opts.volume);
-    beep.play();
+    beep.play(false);
     while (true) {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
@@ -121,7 +122,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
-                DBG("Quitting");
+                Log("Quitting");
                 // exit(0);
                 break;
             }
@@ -137,7 +138,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
             else if (opts.lang == "lua") {
                 lua.process(ticks, opts);
             }
-            // DBG("Freq: " + std::to_string(beep.freq));
+            // Log("Freq: " + std::to_string(beep.freq));
             // beep.freq = ticks % 2 == 0 ? 220 : 440;
             ticks++;
             // Set the window title
@@ -149,7 +150,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
 
 int getArgI(int index, char * argv[], int argc) {
     if (index + 1 >= argc) {
-        DBG("ERROR: Missing value for arg " + std::string(argv[index]));
+        Log("ERROR: Missing value for arg " + std::string(argv[index]));
         showHelp();
         exit(1);
     }
@@ -157,47 +158,99 @@ int getArgI(int index, char * argv[], int argc) {
 }
 std::string getArgS(int index, char * argv[], int argc) {
     if (index + 1 >= argc) {
-        DBG("ERROR: Missing value for arg " + std::string(argv[index]));
+        Log("ERROR: Missing value for arg " + std::string(argv[index]));
         showHelp();
         exit(1);
     }
     return argv[index + 1];
 }
 
+std::string getMeta(std::string fileContents, std::string key) {
+    if (fileContents.find(key) != std::string::npos) {
+        std::string line = fileContents.substr(fileContents.find(key) + key.size());
+        line = line.substr(0, line.find("\n"));
+        return line;
+    }
+    return "";
+}
+
 int main(int argc, char* argv[]) {
     // Parse CLI args
     if (argc < 2) {
-        DBG("ERROR: No file path provided");
+        Log("ERROR: No file path provided");
         showHelp();
         exit(1);
     }
     CLIOpts opts;
     opts.filePath = argv[1];
-    for (int i  = 1; i < argc; i++) {
+
+    std::string fileContents = FileIO::read(opts.filePath);
+    if (fileContents.empty()) {
+        Log("ERROR: File is empty");
+        showHelp();
+        exit(1);
+    }
+    // Parse file meta
+    DBG("Meta: " + getMeta(fileContents, "NAME:"));
+    std::string fileCLI = getMeta(fileContents, "CLI:");
+    // Split the CLI meta into by space into args
+    std::vector<std::string> fileArgvVec;
+    if (!fileCLI.empty()) {
+        DBG("FILE CLI: " + fileCLI);
+        std::istringstream iss(fileCLI);
+        fileArgvVec.push_back(argv[0]);
+        fileArgvVec.push_back(opts.filePath);
+        for (std::string s; iss >> s;) {
+            fileArgvVec.push_back(s);
+        }
+        // TODO: Should prepend to existing argv
+        char** argvCopy = new char*[argc];
+        for (int i = 0; i < argc; i++) {
+            argvCopy[i] = argv[i];
+        }
+        for (int i = 0; i < fileArgvVec.size(); i++) {
+            argv[i] = const_cast<char*>(fileArgvVec[i].c_str());
+        }
+        for (int i = 2; i < argc; i++) {
+            argv[i + fileArgvVec.size() - 2] = argvCopy[i];
+        } 
+        argc += fileArgvVec.size();
+        argc -= 2;
+    }
+    DBG("argc: " + std::to_string(argc));
+    for (int i = 0; i < argc; i++) {
+        DBG("argv " + std::to_string(i)+ ": " + std::string(argv[i]));
+    }
+
+    for (int i  = 0; i < argc; i++) {
         std::string arg = argv[i];
         if (arg == "-l" || arg == "--lang") {
             opts.lang = getArgS(i, argv, argc);
         }
         if (arg == "-d" || arg == "--delay") {
+            Log("Delay: " + std::to_string(getArgI(i, argv, argc)));
             opts.delay = getArgI(i, argv, argc);
         }
         if (arg == "-s" || arg == "--skipIntro") {
-            opts.skipIntro = true;
+            opts.skipIntro = !opts.skipIntro;
         }
         if (arg == "-t" || arg == "--hideTurtle") {
-            opts.hideTurtle = true;
+            opts.hideTurtle = !opts.hideTurtle;
         }
         if (arg == "-o" || arg == "--noLoop") {
-            opts.noLoop = true;
+            opts.noLoop = !opts.noLoop;
+        }
+        if (arg == "-a" || arg == "--autoClose") {
+            opts.autoClose = !opts.autoClose;
         }
         if (arg == "-b" || arg == "--noDebug") {
-            opts.noDebug = true;
+            opts.noDebug = !opts.noDebug;
         }
         if (arg == "-v" || arg == "--volume") {
             opts.volume = getArgI(i, argv, argc);
         }
         if (arg == "-m" || arg == "--mute") {
-            opts.mute = true;
+            opts.mute = !opts.mute;
         }
         if (arg == "-x" || arg == "--scale") {
             opts.scale = getArgI(i, argv, argc);
@@ -220,13 +273,7 @@ int main(int argc, char* argv[]) {
         }
     }
     if (opts.lang == "null") {
-        DBG("ERROR: Cant identify file type");
-        showHelp();
-        exit(1);
-    }
-    std::string fileContents = FileIO::read(opts.filePath);
-    if (fileContents.empty()) {
-        DBG("ERROR: File is empty");
+        Log("ERROR: Cant identify file type");
         showHelp();
         exit(1);
     }
@@ -239,6 +286,6 @@ int main(int argc, char* argv[]) {
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
-    DBG("Final Exit");
+    Log("Final Exit");
     return 0;
 }

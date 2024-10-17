@@ -37,6 +37,7 @@ Options:
   -s, --skipIntro       Skip the intro
   -t, --hideTurtle      Hide the cursor
   -o, --noLoop          Do not loop the program
+  -a, --autoClose       Automatically close the program when done
   -b, --noDebug         Do not show debug messages
   -v, --volume <volume> Set the volume
   -m, --mute            Mute the sound
@@ -100,8 +101,6 @@ Move the turtle to where it was `n` commands ago. Does not reset the rotation.
 # Scripting
 ## JavaScript ([`examples/api.js`](examples/api.js))
 ```js
-// This uses the DuktapeJS engine to run JavaScript code
-// It only supports ES5, so no let, const, or arrow functions etc
 function main() { 
     bg(22,33,44);
     color(255,255,255);
@@ -114,8 +113,11 @@ function main() {
     downLeft(64);
     upLeft(64);
     upRight(64);
-    back(7);
-    downLeft(32);
+    goBack(7);
+    rotateCW(64);
+    rotateCCW(32);
+    rotate(0);
+    forward(32);
     print("Hello, world!");
 }
 ```
@@ -133,8 +135,11 @@ function main() {
 (down-left 64)
 (up-left 64)
 (up-right 64)
-(back 7)
-(down-left 32)
+(go-back 7)
+(rotate-cw 64)
+(rotate-ccw 32)
+(rotate 0)
+(forward 32)
 (print "Hello, world!")
 ```
 
@@ -151,8 +156,11 @@ downRight(64)
 downLeft(64)
 upLeft(64)
 upRight(64)
-back(7)
-downLeft(32)
+goBack(7)
+rotateCW(64)
+rotateCCW(32)
+rotate(0)
+forward(32)
 print("Hello, world!")
 ```
 

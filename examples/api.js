@@ -1,3 +1,9 @@
+// NAME: API Example
+// LANG: JavaScript
+// DESCRIPTION: This example demonstrates the use of the API functions in JavaScript
+// AUTHOR: Mathieu Dombrock
+// CLI: -t
+
 // This uses the DuktapeJS engine to run JavaScript code
 // It only supports ES5, so no let, const, or arrow functions etc
 function main() { 

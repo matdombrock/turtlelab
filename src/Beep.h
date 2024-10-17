@@ -38,7 +38,7 @@ public:
         amplitude = 28000 * v / 100;
     }
     void play(bool once = true) {
-        if (dev) return;
+        if (dev && once) return;
         // return;
         SDL_AudioSpec want, have;
         SDL_memset(&want, 0, sizeof(want));
@@ -52,7 +52,7 @@ public:
         SDL_PauseAudioDevice(dev, 0);
     }
     void stop() {
-        // DBG("Stopping audio");
+        // Log("Stopping audio");
         SDL_PauseAudioDevice(dev, 1);
         SDL_CloseAudioDevice(dev);
         dev = 0;

@@ -4,7 +4,7 @@
 #include <vector>
 #include "SDLInc.h"
 #include "CLIOpts.h"
-#include "DBG.h"
+#include "Log.h"
 #include "Turtle.h"
 #include "Beep.h"
 
@@ -109,17 +109,22 @@ public:
         if (queue.size() == 0) {
             return;
         }
-        if (!opts.noLoop) {
+        if (!opts.noLoop && !opts.autoClose) {
             index = index % queue.size();
         }
         else if (index >= queue.size()) {
+            if (opts.autoClose) {
+                Log("Auto closing");
+                exit(0);
+            }
+            Log("End of program (no loop)");
             return;
         }
         SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
         SDL_RenderClear(ren);
         QueueItem currentItem = queue[index];
         if (index == 0) {
-            if (!opts.noDebug) DBG("-------");
+            if (!opts.noDebug) Log("-------");
             turtle.reset(); // Always reset on first command
         }
         turtle.reset();
@@ -136,7 +141,7 @@ public:
             }
             else {
                 if (item.a < 0) {
-                    DBG("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
+                    Log("WARN: Negative value for command #" + std::to_string(i) + " treated as absolute");
                 }
                 for (int i = 0; i < abs(item.a); i++) {
                     handleCommand(item, ren);
@@ -224,55 +229,55 @@ private:
         }
     }
     void printCommand(QueueItem item, uint index) {
-        DBG("#" + std::to_string(index) + " ", false);
+        Log("#" + std::to_string(index) + " ", false);
         switch  (item.command) {
             case CMD_FORWARD:
-                DBG("FORWARD " + std::to_string(item.a));
+                Log("FORWARD " + std::to_string(item.a));
                 break;
             case CMD_ROTATE:
-                DBG("ROTATE " + std::to_string(item.a));
+                Log("ROTATE " + std::to_string(item.a));
                 break;
             case CMD_ROTATE_CW:
-                DBG("ROTATE_CW " + std::to_string(item.a));
+                Log("ROTATE_CW " + std::to_string(item.a));
                 break;
             case CMD_ROTATE_CCW:
-                DBG("ROTATE_CCW " + std::to_string(item.a));
+                Log("ROTATE_CCW " + std::to_string(item.a));
                 break;
             case CMD_UP:
-                DBG("UP " + std::to_string(item.a));
+                Log("UP " + std::to_string(item.a));
                 break;
             case CMD_DOWN:
-                DBG("DOWN " + std::to_string(item.a));
+                Log("DOWN " + std::to_string(item.a));
                 break;
             case CMD_LEFT:
-                DBG("LEFT " + std::to_string(item.a));
+                Log("LEFT " + std::to_string(item.a));
                 break;
             case CMD_RIGHT:
-                DBG("RIGHT " + std::to_string(item.a));
+                Log("RIGHT " + std::to_string(item.a));
                 break;
             case CMD_UP_RIGHT:
-                DBG("UP_RIGHT " + std::to_string(item.a));
+                Log("UP_RIGHT " + std::to_string(item.a));
                 break;
             case CMD_UP_LEFT:
-                DBG("UP_LEFT " + std::to_string(item.a));
+                Log("UP_LEFT " + std::to_string(item.a));
                 break;
             case CMD_DOWN_RIGHT:
-                DBG("DOWN_RIGHT " + std::to_string(item.a));
+                Log("DOWN_RIGHT " + std::to_string(item.a));
                 break;
             case CMD_DOWN_LEFT:
-                DBG("DOWN_LEFT " + std::to_string(item.a));
+                Log("DOWN_LEFT " + std::to_string(item.a));
                 break;
             case CMD_TELEPORT:
-                DBG("TELEPORT " + std::to_string(item.a) + " " + std::to_string(item.b));
+                Log("TELEPORT " + std::to_string(item.a) + " " + std::to_string(item.b));
                 break;
             case CMD_BACK:
-                DBG("GO_BACK " + std::to_string(item.a));
+                Log("GO_BACK " + std::to_string(item.a));
                 break;
             case CMD_COLOR:
-                DBG("COLOR " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c) + " " + std::to_string(item.d));
+                Log("COLOR " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c) + " " + std::to_string(item.d));
                 break;
             case CMD_BG:
-                DBG("BG " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c));
+                Log("BG " + std::to_string(item.a) + " " + std::to_string(item.b) + " " + std::to_string(item.c));
                 break;
         }
     }

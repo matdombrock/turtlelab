@@ -16,7 +16,6 @@ public:
         diff = std::chrono::duration_cast<std::chrono::milliseconds>(tmp - last);
         if (diff.count() > frameDelay) {
             newFrame = true;
-            // DBG("Frame");
         }
     }
     bool frame() {

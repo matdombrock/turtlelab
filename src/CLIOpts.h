@@ -4,6 +4,7 @@ class CLIOpts {
 public:
     bool hideTurtle = false;
     bool noLoop = false;
+    bool autoClose = false;
     bool noDebug = false;
     bool skipIntro = false;
     uint8_t scale = 1;
