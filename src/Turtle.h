@@ -23,7 +23,12 @@ public:
         pos.y += sin(angle);
     }
     void rotate(uint8_t n) {
-        angle = n * 3.14159 / 128;
+        if (n == 0) { // acts as a reset
+            angle = 0;
+            pos.x = round(pos.x);
+            pos.y = round(pos.y);
+        }
+        else angle = n * 3.14159 / 128;
     }
     void rotateCW() {
         angle += 3.14159 / 128;

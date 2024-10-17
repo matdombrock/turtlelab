@@ -1,5 +1,5 @@
-(define v1 64)
-(define v2 32)
+(define v1 48)
+(define v2 24)
 (define v3 (floor (/ v1 3)))
 
 (define (space) 

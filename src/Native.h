@@ -155,7 +155,26 @@ public:
             uint8_t r, g, b, a;
             SDL_GetRenderDrawColor(ren, &r, &g, &b, &a);
             SDL_SetRenderDrawColor(ren, 0,255,0, 255);
-            SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
+            // SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
+            int curSize = 16;
+            SDL_RenderDrawLine(ren, 
+                turtle.x() * 2, 
+                turtle.y() * 2, 
+                turtle.x() * 2 + curSize * -cos(turtle.angle - M_PI / 6), 
+                turtle.y() * 2 + curSize * -sin(turtle.angle - M_PI / 6)
+            );
+            SDL_RenderDrawLine(ren, 
+                turtle.x() * 2, 
+                turtle.y() * 2, 
+                turtle.x() * 2 + curSize * -cos(turtle.angle + M_PI / 6), 
+                turtle.y() * 2 + curSize * -sin(turtle.angle + M_PI / 6)
+            );
+            SDL_RenderDrawLine(ren, 
+                turtle.x() * 2 + curSize * -cos(turtle.angle - M_PI / 6), 
+                turtle.y() * 2 + curSize * -sin(turtle.angle - M_PI / 6), 
+                turtle.x() * 2 + curSize * -cos(turtle.angle + M_PI / 6), 
+                turtle.y() * 2 + curSize * -sin(turtle.angle + M_PI / 6)
+            );
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
 
