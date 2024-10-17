@@ -53,7 +53,6 @@ public:
     void print(T value) {
         std::cout << value << std::endl;
     }
-
     void color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255) {
         queue.push_back(QueueItem(CMD_COLOR, r, g, b, a));
     }
