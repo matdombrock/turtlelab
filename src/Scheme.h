@@ -162,7 +162,7 @@ public:
         std::string fileEnv = env + file + " 0";
         s7_pointer result = s7_load_c_string(SchemeBinds::s7, fileEnv.c_str(), fileEnv.size());
         std::string resString = s7_object_to_c_string(SchemeBinds::s7, result);
-        Log("Scheme result: " + resString);
+        DBG("Scheme result: " + resString);
         if (resString != "0") {
             Log("ERROR: Issue with Scheme code");
             exit(1);

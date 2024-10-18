@@ -122,7 +122,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
-                Log("Quitting");
+                DBG("Quitting");
                 // exit(0);
                 break;
             }
@@ -138,7 +138,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
             else if (opts.lang == "lua") {
                 lua.process(ticks, opts);
             }
-            // Log("Freq: " + std::to_string(beep.freq));
+            // DBG("Freq: " + std::to_string(beep.freq));
             // beep.freq = ticks % 2 == 0 ? 220 : 440;
             ticks++;
             // Set the window title
@@ -228,7 +228,7 @@ int main(int argc, char* argv[]) {
             opts.lang = getArgS(i, argv, argc);
         }
         if (arg == "-d" || arg == "--delay") {
-            Log("Delay: " + std::to_string(getArgI(i, argv, argc)));
+            DBG("Delay: " + std::to_string(getArgI(i, argv, argc)));
             opts.delay = getArgI(i, argv, argc);
         }
         if (arg == "-s" || arg == "--skipIntro") {
@@ -286,6 +286,6 @@ int main(int argc, char* argv[]) {
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
     SDL_Quit();
-    Log("Final Exit");
+    DBG("Final Exit");
     return 0;
 }

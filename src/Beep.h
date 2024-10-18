@@ -52,7 +52,7 @@ public:
         SDL_PauseAudioDevice(dev, 0);
     }
     void stop() {
-        // Log("Stopping audio");
+        // DBG("Stopping audio");
         SDL_PauseAudioDevice(dev, 1);
         SDL_CloseAudioDevice(dev);
         dev = 0;

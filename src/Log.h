@@ -2,7 +2,7 @@
 #include <iostream>
 template <typename T>
 void DBG(T msg, bool newline = true) {
-    std::cout << msg;
+    std::cout << "DBG: " << msg;
     if (newline) {
         std::cout << std::endl;
     }

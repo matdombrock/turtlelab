@@ -114,7 +114,7 @@ public:
         }
         else if (index >= queue.size()) {
             if (opts.autoClose) {
-                Log("Auto closing");
+                DBG("Auto closing");
                 exit(0);
             }
             Log("End of program (no loop)");
