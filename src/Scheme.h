@@ -169,7 +169,7 @@ public:
         }
         s7_quit(SchemeBinds::s7);
     }
-    void process(int index, CLIOpts opts) override {
-        SchemeBinds::native.process(index, opts, SchemeBinds::ren);
+    void process(RunState state, CLIOpts opts) override {
+        SchemeBinds::native.process(state, opts, SchemeBinds::ren);
     }
 };

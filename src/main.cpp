@@ -9,6 +9,7 @@
 #include "CLIOpts.h"
 #include "Log.h"
 #include "FileIO.h"
+#include "RunState.h"
 
 Scheme scheme;
 JavaScript js;
@@ -26,16 +27,18 @@ void showHelp(bool full = false) {
     std::cout << "-------" << std::endl;
     std::cout << "Usage: turtle <file> [options]" << std::endl;
     std::cout << "Options:" << std::endl;
-    std::cout << "  -l, --lang <lang>     Specify the lang (scheme, js) - Overrides auto detection" << std::endl;
-    std::cout << "  -d, --delay <delay>   Specify the delay between ticks" << std::endl;
-    std::cout << "  -s, --skipIntro       Skip the intro" << std::endl;
-    std::cout << "  -t, --hideTurtle      Hide the cursor" << std::endl;
-    std::cout << "  -o, --noLoop          Do not loop the program" << std::endl;
-    std::cout << "  -a, --autoClose       Automatically close the program when done" << std::endl;
-    std::cout << "  -b, --noDebug         Do not show debug messages" << std::endl;
-    std::cout << "  -v, --volume <volume> Set the volume" << std::endl;
-    std::cout << "  -m, --mute            Mute the sound" << std::endl;
-    std::cout << "  -h, --help            Display this help message" << std::endl;
+    std::cout << "  -l, --lang <scm|js|lua>  Specify the lang - Overrides auto detection" << std::endl;
+    std::cout << "  -d, --delay <delay>      Specify the delay between ticks" << std::endl;
+    std::cout << "  -s, --skipIntro          Skip the intro" << std::endl;
+    std::cout << "  -t, --hideTurtle         Hide the cursor" << std::endl;
+    std::cout << "  -o, --noLoop             Do not loop the program" << std::endl;
+    std::cout << "  -a, --autoClose          Automatically close the program when done" << std::endl;
+    std::cout << "  -b, --noDebug            Do not show debug messages" << std::endl;
+    std::cout << "  -g, --noGrid             Do not show the grid" << std::endl;
+    std::cout << "  -p, --startPaused        Start the program paused" << std::endl;
+    std::cout << "  -v, --volume <volume>    Set the volume" << std::endl;
+    std::cout << "  -m, --mute               Mute the sound" << std::endl;
+    std::cout << "  -h, --help               Display this help message" << std::endl;
 }
 
 void init(CLIOpts opts) {
@@ -102,7 +105,12 @@ void intro(CLIOpts opts) {
 }
 
 void run(CLIOpts opts, std::string fileContents = "") { 
-    if (opts.lang == "scheme") {
+    RunState state;
+    if (opts.startPaused) {
+        Log("Starting paused");
+        state.paused = true;
+    }
+    if (opts.lang == "scm") {
         scheme.load(fileContents, ren);
         scheme.run();
     } 
@@ -114,11 +122,11 @@ void run(CLIOpts opts, std::string fileContents = "") {
         lua.load(fileContents, ren);
         lua.run();
     }
-    int ticks = 0;
-    int delayTime = opts.delay;
     Timer ts;
-    ts.frameDelay = delayTime;
+    ts.frameDelay = opts.delay;
     while (true) {
+        ts.update();
+        int delta = ts.delta();
         SDL_Event e;
         if (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
@@ -126,23 +134,51 @@ void run(CLIOpts opts, std::string fileContents = "") {
                 // exit(0);
                 break;
             }
+            // Handle window inputs
+            if (e.type == SDL_KEYDOWN) {
+                if (e.key.keysym.sym == SDLK_SPACE) {
+                    state.paused = !state.paused;
+                }
+                if (e.key.keysym.sym == SDLK_UP) {
+                    ts.frameDelay -= 0.5f * delta;
+                    ts.frameDelay = std::max(ts.frameDelay, 1);
+                } 
+                if (e.key.keysym.sym == SDLK_DOWN) {
+                    ts.frameDelay += 0.5f * delta;
+                    ts.frameDelay = std::min(ts.frameDelay, 1000);
+                    DBG("Delay: " + std::to_string(ts.frameDelay));
+                }
+                if (e.key.keysym.sym == SDLK_RIGHT) {
+                    state.ticks++;
+                }
+                if (e.key.keysym.sym == SDLK_LEFT) {
+                    state.ticks--;
+                }
+                if (e.key.keysym.sym == SDLK_r) {
+                    state.ticks = 0;
+                }
+                if (e.key.keysym.sym == SDLK_m) {
+                    state.mute = !state.mute;
+                }
+                if (e.key.keysym.sym == SDLK_ESCAPE) {
+                    exit(0);
+                }
+            }
         }
-        ts.update();
         if (ts.frame()) {
-            if (opts.lang == "scheme") {
-                scheme.process(ticks, opts);
+            if (opts.lang == "scm") {
+                scheme.process(state, opts);
             } 
             else if (opts.lang == "js") {
-                js.process(ticks, opts);
+                js.process(state, opts);
             }
             else if (opts.lang == "lua") {
-                lua.process(ticks, opts);
+                lua.process(state, opts);
             }
-            // DBG("Freq: " + std::to_string(beep.freq));
-            // beep.freq = ticks % 2 == 0 ? 220 : 440;
-            ticks++;
+
+            if (!state.paused) state.ticks++;
             // Set the window title
-            std::string title = "TurtleLab - " + opts.filePath + " - " + std::to_string(ts.delta() - opts.delay) + "ms";
+            std::string title = "TurtleLab - " + opts.filePath + " - " + std::to_string(ts.delta() - ts.frameDelay) + "ms";
             SDL_SetWindowTitle(win, title.c_str());
         }
     }
@@ -246,6 +282,12 @@ int main(int argc, char* argv[]) {
         if (arg == "-b" || arg == "--noDebug") {
             opts.noDebug = !opts.noDebug;
         }
+        if (arg == "-g" || arg == "--noGrid") {
+            opts.noGrid = !opts.noGrid;
+        }
+        if (arg == "-p" || arg == "--startPaused") {
+            opts.startPaused = !opts.startPaused;
+        }
         if (arg == "-v" || arg == "--volume") {
             opts.volume = getArgI(i, argv, argc);
         }
@@ -263,7 +305,7 @@ int main(int argc, char* argv[]) {
     // If lang is not provided, try to infer it from the file extension
     if (opts.lang == "null") {
         if (opts.filePath.find(".scm") != std::string::npos) {
-            opts.lang = "scheme";
+            opts.lang = "scm";
         }
         if (opts.filePath.find(".js") != std::string::npos) {
             opts.lang = "js";

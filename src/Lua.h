@@ -178,7 +178,7 @@ public:
             exit(1);
         }
     }
-    void process(int index, CLIOpts opts) override {
-        LuaBinds::native.process(index, opts, LuaBinds::ren);
+    void process(RunState state, CLIOpts opts) override {
+        LuaBinds::native.process(state, opts, LuaBinds::ren);
     }
 };

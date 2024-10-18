@@ -28,75 +28,37 @@ Supported Languages:
 - Foundation for Advanced Concepts: Turtle graphics can be used as a foundation for learning more complex programming topics like loops, functions, and object-oriented programming.
 
 # Usage
+## CLI
 The primary way of interacting with TurtleLab is via the CLI. 
 ```
 Usage: turtle <file> [options]
 Options:
-  -l, --lang <lang>     Specify the lang (scheme, js) - Overrides auto detection
-  -d, --delay <delay>   Specify the delay between ticks
-  -s, --skipIntro       Skip the intro
-  -t, --hideTurtle      Hide the cursor
-  -o, --noLoop          Do not loop the program
-  -a, --autoClose       Automatically close the program when done
-  -b, --noDebug         Do not show debug messages
-  -v, --volume <volume> Set the volume
-  -m, --mute            Mute the sound
-  -h, --help            Display this help message
+  -l, --lang <scm|js|lua>  Specify the lang - Overrides auto detection
+  -d, --delay <delay>      Specify the delay between ticks
+  -s, --skipIntro          Skip the intro
+  -t, --hideTurtle         Hide the cursor
+  -o, --noLoop             Do not loop the program
+  -a, --autoClose          Automatically close the program when done
+  -b, --noDebug            Do not show debug messages
+  -g, --noGrid             Do not show the grid
+  -v, --volume <volume>    Set the volume
+  -m, --mute               Mute the sound
+  -h, --help               Display this help message
 ```
-
 ### Example:
 ```sh
 ./turtle examples/api.js -d 1000
 ```
 
-# API
-## `bg r g b`
-Set the background color. Acceptable color values are between 0 and 255.
-
-## `color r g b a?`
-Set the drawing color. Acceptable color values are between 0 and 255. Alpha is optional. Set an alpha value of 0 to move without drawing. 
-
-## `forward n`
-Move the turtle forward `n` pixels in the direction it is facing. Direction is determined by the current rotation value. 
-
-## `rotate n`
-Rotate the turtle to an absolute rotation value. 256 "rotation units" makes up a full rotation.
-
-## `rotate_cw n`
-Rotate the turtle clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
-
-## `rotate_ccw n`
-Rotate the turtle counter-clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
-
-## `up n`
-Move the turtle up on the Y axis `n` pixels.
-
-## `down n`
-Move the turtle down on the Y axis `n` pixels.
-
-## `left n`
-Move the turtle left on the Y axis `n` pixels.
-
-## `right n`
-Move the turtle right on the Y axis `n` pixels.
-
-## `down_right n`
-Move the turtle down and right `n` pixels in each direction. 
-
-## `down_left n`
-Move the turtle down and left `n` pixels in each direction. 
-
-## `up_right n`
-Move the turtle up and right `n` pixels in each direction. 
-
-## `up_left n`
-Move the turtle up and left `n` pixels in each direction. 
-
-## `teleport x y`
-Move to the given coordinates.
-
-## `go_back n`
-Move the turtle to where it was `n` commands ago. Does not reset the rotation. 
+## Window Hotkeys
+While the TurtleLab window is running, the following hotkeys are available:
+- **SPACE**       - Pause the turtle
+- **UP ARROW**    - Speed up the turtle
+- **DOWN ARROW**  - Slow down the turtle
+- **LEFT ARROW**  - Move forward one command
+- **RIGHT ARROW** - Move backwards one command 
+- **M KEY**       - Mute the audio
+- **ESCAPE**      - Quit TurtleLab
 
 # Scripting
 ## JavaScript ([`examples/api.js`](examples/api.js))
@@ -163,6 +125,54 @@ rotate(0)
 forward(32)
 print("Hello, world!")
 ```
+# API Details
+### `bg r g b`
+Set the background color. Acceptable color values are between 0 and 255.
+
+### `color r g b a?`
+Set the drawing color. Acceptable color values are between 0 and 255. Alpha is optional. Set an alpha value of 0 to move without drawing. 
+
+### `forward n`
+Move the turtle forward `n` pixels in the direction it is facing. Direction is determined by the current rotation value. 
+
+### `rotate n`
+Rotate the turtle to an absolute rotation value. 256 "rotation units" makes up a full rotation.
+
+### `rotate_cw n`
+Rotate the turtle clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
+
+### `rotate_ccw n`
+Rotate the turtle counter-clockwise `n` "rotation units". 256 "rotation units" makes up a full rotation.  
+
+### `up n`
+Move the turtle up on the Y axis `n` pixels.
+
+### `down n`
+Move the turtle down on the Y axis `n` pixels.
+
+### `left n`
+Move the turtle left on the Y axis `n` pixels.
+
+### `right n`
+Move the turtle right on the Y axis `n` pixels.
+
+### `down_right n`
+Move the turtle down and right `n` pixels in each direction. 
+
+### `down_left n`
+Move the turtle down and left `n` pixels in each direction. 
+
+### `up_right n`
+Move the turtle up and right `n` pixels in each direction. 
+
+### `up_left n`
+Move the turtle up and left `n` pixels in each direction. 
+
+### `teleport x y`
+Move to the given coordinates.
+
+### `go_back n`
+Move the turtle to where it was `n` commands ago. Does not reset the rotation. 
 
 # Tips
 - The canvas for drawing on is 256x256 px.
@@ -171,6 +181,9 @@ print("Hello, world!")
 - The audio synthesis parameters are fed by the turtle coordinates as well as the drawing color. 
 - Each subsequent command requires re-running the whole program. So very long program will slow down as they go.
 - Frame delay is displayed in the window title bar. Higher numbers mean your program is running slower. 
+
+---
+---
 
 # Build
 Install the deps listed below and then run the Makefile or build with the shell scripts.

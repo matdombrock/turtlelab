@@ -7,6 +7,7 @@
 #include "Log.h"
 #include "Turtle.h"
 #include "Beep.h"
+#include "RunState.h"
 
 enum Command {
     CMD_FORWARD,
@@ -105,45 +106,47 @@ public:
     void goBack(uint8_t n) {
         queue.push_back(QueueItem(CMD_BACK, n));
     }
-    void process(uint index, CLIOpts opts, SDL_Renderer *ren) {
+    void process(RunState state, CLIOpts opts, SDL_Renderer *ren) {
         if (queue.size() == 0) {
             return;
         }
         if (!opts.noLoop && !opts.autoClose) {
-            index = index % queue.size();
+            state.ticks = state.ticks % queue.size();
         }
-        else if (index >= queue.size()) {
+        else if (state.ticks >= queue.size()) {
             if (opts.autoClose) {
                 DBG("Auto closing");
                 exit(0);
             }
-            Log("End of program (no loop)");
+            
             return;
         }
 
         SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
         SDL_RenderClear(ren);
 
-        SDL_SetRenderDrawColor(ren, 64, 64, 64, 255);
         // Draw a grid
-        for (int x = 0; x < 512; x+=8) {
-            for (int y = 0; y < 512; y+=8) {
-                SDL_RenderDrawLine(ren, x, 0, x, 512);
-                SDL_RenderDrawLine(ren, 0, y, 512, y);
+        if (!opts.noGrid) {
+            SDL_SetRenderDrawColor(ren, 48, 48, 48, 255);
+            for (int x = 0; x < 512; x+=8) {
+                for (int y = 0; y < 512; y+=8) {
+                    SDL_RenderDrawLine(ren, x, 0, x, 512);
+                    SDL_RenderDrawLine(ren, 0, y, 512, y);
+                }
             }
+            SDL_SetRenderDrawColor(ren, 64,64,64, 255);
+            SDL_RenderDrawLine(ren, 0, 256, 512, 256);
+            SDL_RenderDrawLine(ren, 256, 0, 256, 512);
         }
-        SDL_SetRenderDrawColor(ren, 96, 96, 96, 255);
-        SDL_RenderDrawLine(ren, 0, 256, 512, 256);
-        SDL_RenderDrawLine(ren, 256, 0, 256, 512);
 
-        QueueItem currentItem = queue[index];
-        if (index == 0) {
+        QueueItem currentItem = queue[state.ticks];
+        if (state.ticks == 0) {
             if (!opts.noDebug) Log("-------");
             turtle.reset(); // Always reset on first command
         }
         turtle.reset();
-        if (!opts.noDebug) printCommand(currentItem, index);
-        for (int i = 0; i <= index; i++) {
+        if (!opts.noDebug) printCommand(currentItem, state.ticks);
+        for (int i = 0; i <= state.ticks; i++) {
             QueueItem item = queue[i];
             if (item.command == CMD_COLOR 
                 || item.command == CMD_TELEPORT
@@ -198,10 +201,18 @@ public:
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
 
+        if (state.paused) {
+            SDL_SetRenderDrawColor(ren, 196, 128, 0, 255);
+            SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 512, 4});
+            SDL_RenderFillRect(ren, new SDL_Rect{0, 508, 512, 4});
+            SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 4, 512});
+            SDL_RenderFillRect(ren, new SDL_Rect{508, 0, 4, 512});
+        }
+
         SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
         SDL_RenderPresent(ren);
         // Audio
-        beep.setVolume(opts.mute ? 0 : opts.volume);
+        beep.setVolume(opts.mute || state.mute ? 0 : opts.volume);
         beep.play();
         beep.freq = 220;
         beep.freq += turtle.x() * 10;

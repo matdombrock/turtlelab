@@ -187,7 +187,7 @@ public:
         }
         duk_pop(JavaScriptBinds::ctx);
     }
-    void process(int index, CLIOpts opts) override{
-        JavaScriptBinds::native.process(index, opts, JavaScriptBinds::ren);
+    void process(RunState state, CLIOpts opts) override{
+        JavaScriptBinds::native.process(state, opts, JavaScriptBinds::ren);
     }
 };
