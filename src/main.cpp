@@ -46,8 +46,7 @@ void init(CLIOpts opts) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         exit(1);
     }
-    std::string title = "TurtleLab - " + opts.filePath;
-    win = SDL_CreateWindow(title.c_str(), 100, 100, 512 * opts.scale, 554 * opts.scale, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    win = SDL_CreateWindow("TurtleLab", 100, 100, 512 * opts.scale, 554 * opts.scale, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
     if (win == nullptr) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -104,8 +103,7 @@ void intro(CLIOpts opts) {
     beep.stop();
 }
 
-void run(CLIOpts opts, std::string fileContents = "") { 
-    RunState state;
+void run(CLIOpts opts, RunState state, std::string fileContents = "") { 
     if (opts.startPaused) {
         Log("Starting paused");
         state.paused = true;
@@ -177,7 +175,7 @@ void run(CLIOpts opts, std::string fileContents = "") {
 
             if (!state.paused) state.ticks++;
             // Set the window title
-            std::string title = "TurtleLab - " + opts.filePath + " - " + std::to_string(ts.delta() - ts.frameDelay) + "ms";
+            std::string title = "TurtleLab - " + (state.fileName == "" ? opts.filePath : state.fileName) + " - " + std::to_string(ts.delta() - ts.frameDelay) + "ms";
             SDL_SetWindowTitle(win, title.c_str());
         }
     }
@@ -210,6 +208,7 @@ std::string getMeta(std::string fileContents, std::string key) {
 }
 
 int main(int argc, char* argv[]) {
+    RunState state;
     // Parse CLI args
     if (argc < 2) {
         Log("ERROR: No file path provided");
@@ -226,8 +225,9 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
     // Parse file meta
-    DBG("Meta: " + getMeta(fileContents, "NAME:"));
-    std::string fileCLI = getMeta(fileContents, "CLI:");
+    state.fileName = getMeta(fileContents, "NAME:");
+    DBG("File Name: " + state.fileName);
+    std::string fileCLI = getMeta(fileContents, "OPT:");
     // Split the CLI meta into by space into args
     std::vector<std::string> fileArgvVec;
     if (!fileCLI.empty()) {
@@ -320,7 +320,7 @@ int main(int argc, char* argv[]) {
 
     init(opts);
     if (!opts.skipIntro) intro(opts);
-    run(opts, fileContents);
+    run(opts, state, fileContents);
 
     // Clean up resources when done
     SDL_DestroyRenderer(ren);

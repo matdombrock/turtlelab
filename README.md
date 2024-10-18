@@ -127,10 +127,19 @@ print("Hello, world!")
 ```
 
 # Script File Metadata
-Scripts can contain metadata in their comments. 
+Scripts can contain metadata in their comments. Some meta data is functional and can change the way the program runs. All metadata is optional. 
 
+- **`NAME:`** - Sets script name in window title
+- **`OPT:`** - Set default CLI options for this file
+- **`DESC:`** - A short description of the script.
+- **`AUTH:`** - The name and/or contact info of the author.
+
+### Example:
 ```
-More info soon
+// NAME: My Script
+// OPT: -d 100 -s
+// DESC: A test script. Runs with 100ms delay and skips startup.
+// AUTH: Leonardo
 ```
 
 # API Details
