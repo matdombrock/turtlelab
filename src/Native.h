@@ -122,6 +122,8 @@ public:
             return;
         }
 
+        const int top = 36;
+
         SDL_SetRenderDrawColor(ren, bgr, bgg, bgb, 255);
         SDL_RenderClear(ren);
 
@@ -130,13 +132,13 @@ public:
             SDL_SetRenderDrawColor(ren, 48, 48, 48, 255);
             for (int x = 0; x < 512; x+=8) {
                 for (int y = 0; y < 512; y+=8) {
-                    SDL_RenderDrawLine(ren, x, 0, x, 512);
-                    SDL_RenderDrawLine(ren, 0, y, 512, y);
+                    SDL_RenderDrawLine(ren, x, top, x, 512 + top);
+                    SDL_RenderDrawLine(ren, 0, y + top, 512, y + top);
                 }
             }
             SDL_SetRenderDrawColor(ren, 64,64,64, 255);
-            SDL_RenderDrawLine(ren, 0, 256, 512, 256);
-            SDL_RenderDrawLine(ren, 256, 0, 256, 512);
+            SDL_RenderDrawLine(ren, 0, 256 + top, 512, 256 + top);
+            SDL_RenderDrawLine(ren, 256, 0 + top, 256, 512 + top);
         }
 
         QueueItem currentItem = queue[state.ticks];
@@ -145,7 +147,7 @@ public:
             turtle.reset(); // Always reset on first command
         }
         turtle.reset();
-        if (!opts.noDebug) printCommand(currentItem, state.ticks);
+        if (!opts.noDebug && !state.paused) printCommand(currentItem, state.ticks);
         for (int i = 0; i <= state.ticks; i++) {
             QueueItem item = queue[i];
             if (item.command == CMD_COLOR 
@@ -154,7 +156,7 @@ public:
             {
                 handleCommand(item, ren);
                 // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+                SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2 + top, 2, 2});
             }
             else {
                 if (item.a < 0) {
@@ -163,12 +165,13 @@ public:
                 // Special case for rotate 0
                 if (item.command == CMD_ROTATE && item.a == 0) {
                     handleCommand(item, ren);
+                    SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2 + top, 2, 2});
                 }
                 else {
                     for (int i = 0; i < abs(item.a); i++) {
                         handleCommand(item, ren);
                         // SDL_RenderDrawPoint(ren, turtle.x, turtle.y);
-                        SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2, 2, 2});
+                        SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2, turtle.y() * 2 + top, 2, 2});
                     }
                 }
             }
@@ -180,34 +183,98 @@ public:
             SDL_SetRenderDrawColor(ren, 0,255,0, 255);
             // SDL_RenderDrawRect(ren, new SDL_Rect{turtle.x() * 2 - 8, turtle.y() * 2 - 8, 16, 16});
             int curSize = 16;
+            int x = turtle.x() * 2;
+            int y = turtle.y() * 2 + top;
+            // SDL_RenderFillRect(ren, new SDL_Rect{x - 8, y - 8, 16, 16});
             SDL_RenderDrawLine(ren, 
-                turtle.x() * 2, 
-                turtle.y() * 2, 
-                turtle.x() * 2 + curSize * -cos(turtle.angle - M_PI / 6), 
-                turtle.y() * 2 + curSize * -sin(turtle.angle - M_PI / 6)
+                x, 
+                y,
+                x + curSize * -cos(turtle.angle - M_PI / 6), 
+                y + curSize * -sin(turtle.angle - M_PI / 6)
             );
             SDL_RenderDrawLine(ren, 
-                turtle.x() * 2, 
-                turtle.y() * 2, 
-                turtle.x() * 2 + curSize * -cos(turtle.angle + M_PI / 6), 
-                turtle.y() * 2 + curSize * -sin(turtle.angle + M_PI / 6)
+                x, 
+                y, 
+                x + curSize * -cos(turtle.angle + M_PI / 6), 
+                y + curSize * -sin(turtle.angle + M_PI / 6)
             );
             SDL_RenderDrawLine(ren, 
-                turtle.x() * 2 + curSize * -cos(turtle.angle - M_PI / 6), 
-                turtle.y() * 2 + curSize * -sin(turtle.angle - M_PI / 6), 
-                turtle.x() * 2 + curSize * -cos(turtle.angle + M_PI / 6), 
-                turtle.y() * 2 + curSize * -sin(turtle.angle + M_PI / 6)
+                x + curSize * -cos(turtle.angle - M_PI / 6), 
+                y + curSize * -sin(turtle.angle - M_PI / 6), 
+                x + curSize * -cos(turtle.angle + M_PI / 6), 
+                y + curSize * -sin(turtle.angle + M_PI / 6)
             );
             SDL_SetRenderDrawColor(ren, r, g, b, a);
         }
 
         if (state.paused) {
             SDL_SetRenderDrawColor(ren, 196, 128, 0, 255);
-            SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 512, 4});
-            SDL_RenderFillRect(ren, new SDL_Rect{0, 508, 512, 4});
-            SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 4, 512});
-            SDL_RenderFillRect(ren, new SDL_Rect{508, 0, 4, 512});
+            SDL_RenderFillRect(ren, new SDL_Rect{0, top, 512, 4});
+            SDL_RenderFillRect(ren, new SDL_Rect{0, 508 + top, 512, 4});
+            SDL_RenderFillRect(ren, new SDL_Rect{0, top, 4, 512});
+            SDL_RenderFillRect(ren, new SDL_Rect{508, top, 4, 512});
         }
+
+        // Draw top bar
+        SDL_SetRenderDrawColor(ren, 33, 33, 33, 200);
+        SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 512, top});
+
+        // T
+        (state.ticks % 10 != 0) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{4, 4, 32, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{16, 4, 8, 28});
+        // U
+        (state.ticks % 10 != 1) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{48, 4, 8, 28}); 
+        SDL_RenderFillRect(ren, new SDL_Rect{48, 24, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{64, 4, 8, 28});
+        // R
+        (state.ticks % 10 != 2) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{88, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{88, 4, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{112, 4, 8, 16});
+        SDL_RenderFillRect(ren, new SDL_Rect{96, 16, 16, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{112, 24, 8, 8});
+        // T
+        (state.ticks % 10 != 3) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{128, 4, 32, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{140, 4, 8, 28});
+        // L
+        (state.ticks % 10 != 4) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{172, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{172, 24, 24, 8});
+        // E
+        (state.ticks % 10 != 5) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{212, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{212, 4, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{212, 16, 16, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{212, 24, 24, 8});
+        // L
+        (state.ticks % 10 != 6) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{248, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{248, 24, 24, 8});
+        // A
+        (state.ticks % 10 != 7) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{284, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{284, 4, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{284, 16, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{308, 4, 8, 28});
+        // B
+        (state.ticks % 10 != 8) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        SDL_RenderFillRect(ren, new SDL_Rect{324, 4, 8, 28});
+        SDL_RenderFillRect(ren, new SDL_Rect{324, 4, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{324, 16, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{324, 24, 24, 8});
+        SDL_RenderFillRect(ren, new SDL_Rect{348, 4, 8, 16});
+        SDL_RenderFillRect(ren, new SDL_Rect{348, 16, 8, 8});
+        // Draw a turtle after the title
+        (state.ticks % 10 != 9) ? SDL_SetRenderDrawColor(ren, 0, 255, 0, 128) : SDL_SetRenderDrawColor(ren, 0, 255, 0, 148);
+        SDL_RenderFillRect(ren, new SDL_Rect{404, 4, 24, 4}); 
+        SDL_RenderFillRect(ren, new SDL_Rect{400, 8, 32, 16});
+        (state.ticks % 10 != 9) ? SDL_SetRenderDrawColor(ren, 255, 255, 255, 128) : SDL_SetRenderDrawColor(ren, 255, 255, 255, 148); 
+        SDL_RenderFillRect(ren, new SDL_Rect{400, 20, 8, 8}); 
+        SDL_RenderFillRect(ren, new SDL_Rect{420, 20, 8, 8}); 
+        SDL_RenderFillRect(ren, new SDL_Rect{432, 12, 12, 12}); 
 
         SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
         SDL_RenderPresent(ren);

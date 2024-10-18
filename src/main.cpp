@@ -47,7 +47,7 @@ void init(CLIOpts opts) {
         exit(1);
     }
     std::string title = "TurtleLab - " + opts.filePath;
-    win = SDL_CreateWindow(title.c_str(), 100, 100, 512 * opts.scale, 512 * opts.scale, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+    win = SDL_CreateWindow(title.c_str(), 100, 100, 512 * opts.scale, 554 * opts.scale, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
     if (win == nullptr) {
         std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
