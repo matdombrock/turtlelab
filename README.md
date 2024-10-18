@@ -125,12 +125,20 @@ rotate(0)
 forward(32)
 print("Hello, world!")
 ```
+
+# Script File Metadata
+Scripts can contain metadata in their comments. 
+
+```
+More info soon
+```
+
 # API Details
 ### `bg r g b`
 Set the background color. Acceptable color values are between 0 and 255.
 
 ### `color r g b a?`
-Set the drawing color. Acceptable color values are between 0 and 255. Alpha is optional. Set an alpha value of 0 to move without drawing. 
+Set the drawing color. Acceptable color values are between 0 and 255. Alpha is optional. 
 
 ### `forward n`
 Move the turtle forward `n` pixels in the direction it is facing. Direction is determined by the current rotation value. 
@@ -177,7 +185,8 @@ Move the turtle to where it was `n` commands ago. Does not reset the rotation.
 # Tips
 - The canvas for drawing on is 256x256 px.
 - Drawing outside of the canvas is generally allowed.
-- `rotate 0` resets the rotation and snaps the turtle sub-position. 
+- `rotate 0` resets the rotation and snaps the turtle sub-position.
+- Set a color with an alpha value of 0 to move without drawing.  
 - The audio synthesis parameters are fed by the turtle coordinates as well as the drawing color. 
 - Each subsequent command requires re-running the whole program. So very long program will slow down as they go.
 - Frame delay is displayed in the window title bar. Higher numbers mean your program is running slower. 

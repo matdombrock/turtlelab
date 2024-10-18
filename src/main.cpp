@@ -146,7 +146,6 @@ void run(CLIOpts opts, std::string fileContents = "") {
                 if (e.key.keysym.sym == SDLK_DOWN) {
                     ts.frameDelay += 0.5f * delta;
                     ts.frameDelay = std::min(ts.frameDelay, 1000);
-                    DBG("Delay: " + std::to_string(ts.frameDelay));
                 }
                 if (e.key.keysym.sym == SDLK_RIGHT) {
                     state.ticks++;
@@ -239,7 +238,6 @@ int main(int argc, char* argv[]) {
         for (std::string s; iss >> s;) {
             fileArgvVec.push_back(s);
         }
-        // TODO: Should prepend to existing argv
         char** argvCopy = new char*[argc];
         for (int i = 0; i < argc; i++) {
             argvCopy[i] = argv[i];
