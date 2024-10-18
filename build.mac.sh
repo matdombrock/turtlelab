@@ -11,7 +11,7 @@ g++ ./src/main.cpp \
     ./build/s7.o  \
     ./build/duktape.o \
     ./lib/lua/src/liblua.a \
-    -std=c++14 \
+    -std=c++11 \
     -I/opt/homebrew/include/SDL2 $SDL2_STATIC_LIB_PATH \
     -framework Cocoa -framework IOKit -framework CoreVideo -framework Carbon -framework ForceFeedback -framework AudioToolbox -framework CoreAudio -framework CoreFoundation -framework CoreGraphics -framework CoreServices -framework Foundation -framework QuartzCore -framework AppKit -framework GameController -framework Metal -framework CoreHaptics \
     -o ./build/turtle || exit 1
