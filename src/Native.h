@@ -142,12 +142,12 @@ public:
         }
 
         QueueItem currentItem = queue[state.ticks];
-        if (state.ticks == 0) {
+        if (state.ticks == 0 && lastTick != state.ticks) {
             if (!opts.noDebug) Log("-------");
             turtle.reset(); // Always reset on first command
         }
         turtle.reset();
-        if (!opts.noDebug && !state.paused) printCommand(currentItem, state.ticks);
+        if (!opts.noDebug && lastTick != state.ticks) printCommand(currentItem, state.ticks);
         for (int i = 0; i <= state.ticks; i++) {
             QueueItem item = queue[i];
             if (item.command == CMD_COLOR 
@@ -220,47 +220,47 @@ public:
         SDL_RenderFillRect(ren, new SDL_Rect{0, 0, 512, top});
 
         // T
-        (state.ticks % 10 != 0) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 0) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{4, 4, 32, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{16, 4, 8, 28});
         // U
-        (state.ticks % 10 != 1) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 1) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{48, 4, 8, 28}); 
         SDL_RenderFillRect(ren, new SDL_Rect{48, 24, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{64, 4, 8, 28});
         // R
-        (state.ticks % 10 != 2) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 2) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{88, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{88, 4, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{112, 4, 8, 16});
         SDL_RenderFillRect(ren, new SDL_Rect{96, 16, 16, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{112, 24, 8, 8});
         // T
-        (state.ticks % 10 != 3) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 3) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{128, 4, 32, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{140, 4, 8, 28});
         // L
-        (state.ticks % 10 != 4) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 4) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{172, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{172, 24, 24, 8});
         // E
-        (state.ticks % 10 != 5) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 5) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{212, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{212, 4, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{212, 16, 16, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{212, 24, 24, 8});
         // L
-        (state.ticks % 10 != 6) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 6) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{248, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{248, 24, 24, 8});
         // A
-        (state.ticks % 10 != 7) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 7) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{284, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{284, 4, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{284, 16, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{308, 4, 8, 28});
         // B
-        (state.ticks % 10 != 8) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 200) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 216);
+        (state.ticks % 10 != 8) ? SDL_SetRenderDrawColor(ren, 128, 128, 128, 255) : SDL_SetRenderDrawColor(ren, 138, 138, 136, 255);
         SDL_RenderFillRect(ren, new SDL_Rect{324, 4, 8, 28});
         SDL_RenderFillRect(ren, new SDL_Rect{324, 4, 24, 8});
         SDL_RenderFillRect(ren, new SDL_Rect{324, 16, 24, 8});
@@ -268,7 +268,7 @@ public:
         SDL_RenderFillRect(ren, new SDL_Rect{348, 4, 8, 16});
         SDL_RenderFillRect(ren, new SDL_Rect{348, 16, 8, 8});
         // Draw a turtle after the title
-        (state.ticks % 10 != 9) ? SDL_SetRenderDrawColor(ren, 0, 255, 0, 128) : SDL_SetRenderDrawColor(ren, 0, 255, 0, 148);
+        (state.ticks % 10 != 9) ? SDL_SetRenderDrawColor(ren, 128, 255, 64, 128) : SDL_SetRenderDrawColor(ren, 128, 255, 64, 148);
         SDL_RenderFillRect(ren, new SDL_Rect{404, 4, 24, 4}); 
         SDL_RenderFillRect(ren, new SDL_Rect{400, 8, 32, 16});
         (state.ticks % 10 != 9) ? SDL_SetRenderDrawColor(ren, 255, 255, 255, 128) : SDL_SetRenderDrawColor(ren, 255, 255, 255, 148); 
@@ -289,8 +289,11 @@ public:
         beep.m1 = r / 255.0f;
         beep.m2 = g / 255.0f;
         beep.m3 = b / 255.0f;
+
+        lastTick = state.ticks;
     }
 private:
+    int lastTick = -1;
     void handleCommand(QueueItem item, SDL_Renderer *ren) {
         switch (item.command ) {
             case CMD_FORWARD:

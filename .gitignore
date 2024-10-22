@@ -6,3 +6,4 @@ lib/lua/src/luac
 lib/lua/src/lua
 lib/lua/src/luac
 env.src
+.DS_Store

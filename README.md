@@ -47,7 +47,7 @@ Options:
 ```
 ### Example:
 ```sh
-./turtle examples/api.js -d 1000
+./turtle examples/api.js -d 1000 -s
 ```
 
 ## Window Hotkeys
