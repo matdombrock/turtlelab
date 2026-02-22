@@ -1,0 +1,42 @@
+{
+  "workspace": {
+    "library": [
+      "./examples",
+      "./"
+    ],
+    "maxPreload": 1000,
+    "preloadFileSize": 500
+  },
+  "runtime": {
+    "version": "Lua 5.4",
+    "path": [
+      "?.lua",
+      "?/init.lua",
+      "./examples/?.lua"
+    ]
+  },
+  "diagnostics": {
+    "globals": [
+      "bg",
+      "color",
+      "teleport",
+      "down",
+      "right",
+      "up",
+      "left",
+      "downRight",
+      "downLeft",
+      "upLeft",
+      "upRight",
+      "goBack",
+      "rotateCW",
+      "rotateCCW",
+      "rotate",
+      "forward",
+      "print"
+    ]
+  },
+  "format": {
+    "enable": true
+  }
+}
