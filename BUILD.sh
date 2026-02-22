@@ -29,10 +29,6 @@ This file lists all build-time and runtime dependencies required to build and ru
 - **rt**: Real-time extensions
 - **GL / GLU**: OpenGL libraries
 
-## AppImage Packaging Dependencies
-- **appimagetool**: For creating AppImages
-- **FUSE**: Filesystem in Userspace (libfuse)
-
 ## Optional/Platform-Specific
 - **Emscripten**: For WASM builds
 - **SDL2-static**: For static linking (optional)
@@ -68,3 +64,43 @@ sudo apt install cmake gcc g++ make git wget \
 - For WASM builds, install Emscripten separately.
 - For Mac builds, see CMakeLists.txt for required frameworks.
 - Some dependencies may already be present on your system.
+
+
+# Build
+
+## macOS build
+Deps;
+```sh
+brew install sdl2 --build-from-source
+```
+
+Make:
+```sh
+mkdir -p build
+cd build
+make ..
+make turtle_mac
+```
+
+## Linux build
+Deps:
+```sh
+sudo apt-get update
+sudo apt-get install build-essential libsdl2-dev libxdamage-dev libxcomposite-dev libglew-dev
+```
+
+If you run into issues installing packages try:
+```sh
+sudo apt-get remove --purge libegl-mesa0
+sudo apt-get clean
+sudo apt-get autoremove
+```
+
+Make:
+```sh
+mkdir -p build
+cd build
+make ..
+make turtle_linux
+```
+
