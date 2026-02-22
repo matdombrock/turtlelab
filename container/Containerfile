@@ -11,7 +11,19 @@ RUN dnf -y install \
     SDL2-static \
     git \
     python3 \
-    python3-pip
+    python3-pip \
+    libXext-devel \
+    libXcursor-devel \
+    libXinerama-devel \
+    libXi-devel \
+    libXrandr-devel \
+    libXrender-devel \
+    libXfixes-devel \
+    libXxf86vm-devel \
+    libXdamage-devel \
+    libXcomposite-devel \
+    libXdmcp-devel \
+    glew-devel
 
 WORKDIR /workspace
 

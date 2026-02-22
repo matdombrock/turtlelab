@@ -204,20 +204,20 @@ Move the turtle to where it was `n` commands ago. Does not reset the rotation.
 ---
 
 # Build
-Install the deps listed below and then run the Makefile or build with the shell scripts.
+
+Install the deps listed below and then run CMake.
+
 ## macOS build
 Deps;
 ```sh
 brew install sdl2 --build-from-source
 ```
-Build scripts:
-```sh
-./buildLibs.sh
-./buildMac.sh
-```
 
-Makefile:
+Make:
 ```sh
+mkdir -p build
+cd build
+make ..
 make turtle_mac
 ```
 
@@ -235,13 +235,10 @@ sudo apt-get clean
 sudo apt-get autoremove
 ```
 
-Build Scripts:
+Make:
 ```sh
-./buildLibs.sh
-./buildLinux.sh
-```
-
-Makefile:
-```
+mkdir -p build
+cd build
+make ..
 make turtle_linux
 ```

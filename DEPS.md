@@ -45,16 +45,14 @@ sudo dnf install \
     SDL2-devel SDL2-static glew glew-devel \
     libXext-devel libXcursor-devel libXinerama-devel libXi-devel \
     libXrandr-devel libXrender-devel libXfixes-devel libXxf86vm-devel \
-    libXdamage-devel libXcomposite-devel libXdmcp-devel \
-    fuse fuse-libs
+    libXdamage-devel libXcomposite-devel libXdmcp-devel
 ```
 
 ## How to Install (Arch Example)
 ```
 sudo pacman -S cmake gcc make git wget \
     sdl2 sdl2_static glew libxext libxcursor libxinerama libxi \
-    libxrandr libxrender libxfixes libxxf86vm libxdamage libxcomposite libxdmcp \
-    fuse
+    libxrandr libxrender libxfixes libxxf86vm libxdamage libxcomposite libxdmcp
 ```
 
 ## How to Install (Ubuntu Example)
@@ -63,8 +61,7 @@ sudo apt install cmake gcc g++ make git wget \
     libsdl2-dev libsdl2-static libglew-dev \
     libxext-dev libxcursor-dev libxinerama-dev libxi-dev \
     libxrandr-dev libxrender-dev libxfixes-dev libxxf86vm-dev \
-    libxdamage-dev libxcomposite-dev libxdmcp-dev \
-    libfuse2
+    libxdamage-dev libxcomposite-dev libxdmcp-dev
 ```
 
 ## Notes
