@@ -38,6 +38,7 @@ void showHelp(bool full = false) {
     std::cout << "  -p, --startPaused        Start the program paused" << std::endl;
     std::cout << "  -v, --volume <volume>    Set the volume" << std::endl;
     std::cout << "  -m, --mute               Mute the sound" << std::endl;
+    std::cout << "  -x, --scale              Window scale" << std::endl;
     std::cout << "  -h, --help               Display this help message" << std::endl;
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <string>
 class CLIOpts {
 public:
     bool hideTurtle = false;
